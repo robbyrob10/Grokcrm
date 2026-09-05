@@ -8,12 +8,16 @@
 </head>
 <body style="margin:0;font:14px/1.45 -apple-system,sans-serif;background:#F3F5F7;color:#1A1F26">
 <p id="boot" style="padding:28px 20px">Loading desk…</p>
+<script src="p0.js"></script>
+<script src="p1.js"></script>
+<script src="p2.js"></script>
+<script src="p3.js"></script>
 <script>
 (async function () {
   var el = document.getElementById("boot");
   try {
     if (!window.DecompressionStream) throw new Error("Safari too old");
-    var b64 = "PLACEHOLDER";
+    var b64 = P0 + P1 + P2 + P3;
     var bin = Uint8Array.from(atob(b64), function (c) { return c.charCodeAt(0); });
     var ds = new DecompressionStream("gzip");
     var stream = new Blob([bin]).stream().pipeThrough(ds);

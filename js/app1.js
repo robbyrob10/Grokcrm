@@ -1,76 +1,101 @@
-function accountsOf(l) {
-  return l.accounts || [{name: l.bank.name, acct: l.bank.acct, stmts: l.stmts || []}];
+function stmtPaper(l, ai, si, page) {
+  const a = accountsOf(l)[ai];
+  const s = a.stmts[si];
+  const pages = s.pages || 6;
+  const p = Math.max(0, Math.min(pages - 1, page|0));
+  if (p === 0) {
+    return `<div class="stamp">SCANNED · ${p+1}/${pages}</div>
+      <div class="bank">${esc(a.name.toUpperCase())}</div>
+      <h2>Business checking · ${esc(s.m)}</h2>
+      <table>
+        <tr><th>Account holder</th><td>${esc(l.company)}</td></tr>
+        <tr><th>Account number</th><td>${esc(a.acct)}</td></tr>
+        <tr><th>Period</th><td>${esc(s.m)}</td></tr>
+        <tr><th>Total deposits</th><td class="end">${money(s.dep)}</td></tr>
+        <tr><th>Ending balance</th><td class="end">${money(s.end)}</td></tr>
+      </table>
+      <p style="margin-top:22px;font-size:12px;line-height:1.55;color:#5C564C">Page 1 of ${pages}. Use the arrows for subsequent activity pages. Figures as reported by ${esc(a.name)}.</p>`;
+  }
+  const rows = Array.from({length: 12}, (_, i) => {
+    const day = 1 + ((p * 12 + i) % 28);
+    const amt = Math.round((s.dep / (pages * 11)) * (0.7 + ((i * 3 + p) % 5) * 0.12));
+    const names = ["ACH credit · batch", "Card settlement", "Wire in", "Counter credit", "ACH debit · vendor", "Payroll", "Rent draft"];
+    const nm = names[(i + p) % names.length];
+    const credit = !/debit|payroll|rent/i.test(nm);
+    return `<tr><td>${esc(s.m.slice(0,3))} ${day}</td><td>${nm}</td><td class="end">${credit ? money(amt) : "\u2212" + money(amt)}</td></tr>`;
+  }).join("");
+  return `<div class="stamp">SCANNED · ${p+1}/${pages}</div>
+    <div class="bank">${esc(a.name.toUpperCase())}</div>
+    <h2>Activity · ${esc(s.m)} · p. ${p+1}</h2>
+    <table>
+      <tr><th>Date</th><th>Description</th><th>Amount</th></tr>
+      ${rows}
+    </table>
+    <p style="margin-top:18px;font-size:12px;color:#5C564C">Continued · ${esc(a.acct)}</p>`;
 }
-const LS = { rail: "forge.railW", dock: "forge.dockW" };
-function storeGet(k) {
-  try { return localStorage.getItem(k); } catch (e) { return null; }
+function fmtElapsed(s) {
+  const m = Math.floor(s / 60), r = s % 60;
+  return String(m).padStart(2,"0") + ":" + String(r).padStart(2,"0");
 }
-function storeSet(k, v) {
-  try { localStorage.setItem(k, v); } catch (e) {}
+function filtered() {
+  let list = LEADS.slice();
+  if (state.filter === "mine") list = list.filter(l => l.rep === "Cole Brennan");
+  if (state.filter === "star") list = list.filter(l => state.fav.has(l.id));
+  if (state.filter === "today") list = list.filter(l => state.follow[l.id] === "2026-09-05");
+  const q = state.query.trim().toLowerCase();
+  if (q) list = list.filter(l => (l.company + l.contact + l.mobiles.map(p=>p.n).join(" ") + l.emails.map(e=>e.n).join(" ")).toLowerCase().includes(q));
+  return list;
 }
-const state = {
-  selected: "ns",
-  filter: "all",
-  query: "",
-  commsTab: "all",
-  threadN: "",
-  threadCh: "sms",
-  fileZoom: 1.2,
-  keypadOpen: false,
-  fav: new Set(),
-  follow: {},
-  modal: null,
-  drafts: {},
-  dial: { status:"idle", device:"poly", number:"", contact:"", elapsed:0, started:0, muted:false, hold:false, speaker:false, dtmf:"" }
-};
-let tick = null;
-const $ = (id) => document.getElementById(id);
-const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&"+"amp;","<":"&"+"lt;",">":"&"+"gt;",'"':"&"+"quot;","'":"&#39;"}[c]));
-const money = (n) => n == null ? "\u2014" : "$" + Math.round(n).toLocaleString("en-US");
-const lead = () => LEADS.find(l => l.id === state.selected) || LEADS[0];
-const device = () => DEVICES.find(d => d.id === state.dial.device) || DEVICES[0];
-function displayName(n) { return String(n).replace(/^Dr\.\s+/i, ""); }
-function hue(str) {
-  let h = 0; for (const c of str) h = (h * 33 + c.charCodeAt(0)) % 360;
-  return `hsl(${h} 22% 38%)`;
+function qactPhone(n, who, sms, wa) {
+  return `<div class="qacts">
+    <button title="Call" data-act="call" data-n="${esc(n)}" data-who="${esc(who)}">${ico("phone",15)}</button>
+    ${sms ? `<button title="SMS" data-act="sms" data-n="${esc(n)}">${ico("sms",15)}</button>` : ""}
+    ${wa ? `<button title="WhatsApp" data-act="wa" data-n="${esc(n)}">${ico("wa",15)}</button>` : ""}
+  </div>`;
 }
-function initials(n) {
-  return displayName(n).split(/\s+/).slice(0,2).map(p => p[0]).join("").toUpperCase();
+function applyWidths() {
+  const r = storeGet(LS.rail);
+  const d = storeGet(LS.dock);
+  document.documentElement.style.setProperty("--rail-w", (r ? +r : 400) + "px");
+  document.documentElement.style.setProperty("--dock-w", (d ? +d : 500) + "px");
 }
-function ico(name, s=16) {
-  const p = {
-    phone: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6.4 6.4l1.2-1.2a2 2 0 0 1 2.1-.4c.8.2 1.7.5 2.6.6a2 2 0 0 1 1.7 2Z"/>',
-    mail: '<path d="M4 4h16v16H4z"/><path d="m4 4 8 9 8-9"/>',
-    sms: '<path d="M4 4h16v12H7l-3 4V4z"/>',
-    wa: '<path d="M12 3a8 8 0 0 0-6.9 12.1L4 21l6-1.1A8 8 0 1 0 12 3z"/><path d="M9.2 9.6c.2-.5.3-.5.6-.5h.5c.2 0 .3.1.4.4l.6 1.5c.1.2 0 .4-.1.5l-.4.4c-.1.1-.1.3 0 .4.3.5.8 1 1.3 1.3.2.1.3.1.4 0l.4-.4c.2-.2.4-.2.5-.1l1.5.6c.2.1.4.2.4.4v.5c0 .2 0 .4-.5.6A6 6 0 0 1 9.2 9.6z"/>',
-    mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
-    hold: '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>',
-    spk: '<path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9a4 4 0 0 1 0 6"/>',
-    grid: '<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/>',
-    plus: '<path d="M12 5v14M5 12h14"/>',
-    x: '<path d="M6 6l12 12M18 6 6 18"/>',
-    send: '<path d="M4 12h16M14 6l6 6-6 6"/>',
-    check: '<path d="M5 12.5l4 4 10-10"/>',
-    chevL: '<path d="M15 6l-6 6 6 6"/>',
-    chevR: '<path d="M9 6l6 6-6 6"/>',
-    minus: '<path d="M5 12h14"/>',
-    doc: '<path d="M7 3h8l5 5v13H7z"/><path d="M15 3v5h5"/>'
-  };
-  return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${p[name]||""}</svg>`;
+function placePad() {
+  const pop = $("padPop");
+  const dock = $("dock");
+  if (!pop || !dock) return;
+  if (!state.keypadOpen) { pop.classList.remove("open"); return; }
+  const r = dock.getBoundingClientRect();
+  pop.style.left = (r.right - 244) + "px";
+  pop.style.top = (r.bottom - 75 - 12 - 214) + "px";
+  pop.classList.add("open");
+  pop.innerHTML = `<div class="pad">${[["1",""],["2","ABC"],["3","DEF"],["4","GHI"],["5","JKL"],["6","MNO"],["7","PQRS"],["8","TUV"],["9","WXYZ"],["*",""],["0","+"],["#",""]].map(([n,l]) =>
+    `<button data-act="dtmf" data-k="${n}">${n}${l?`<small>${l}</small>`:""}</button>`).join("")}</div>`;
 }
-function toast(msg) {
-  const el = $("toast"); el.textContent = msg; el.classList.add("show");
-  clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove("show"), 2200);
-}
-function field(k,v){ return `<div class="field"><div class="k">${esc(k)}</div><div class="v">${v}</div></div>`; }
-function spark(values) {
-  const w = 320, h = 36, min = Math.min(...values) * 0.82, max = Math.max(...values);
-  const pts = values.map((v,i) => {
-    const x = (i / (values.length - 1)) * w;
-    const y = h - ((v - min) / (max - min || 1)) * (h - 6) - 2;
-    return [x, y];
-  });
-  const d = pts.map((p,i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
-  const area = d + ` L ${w} ${h} L 0 ${h} Z`;
-  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><path d="${area}" fill="rgba(28,31,36,.10)"/><path d="${d}" fill="none" stroke="#1C1F24" stroke-width="1.75"/></svg>`;
+
+function renderRail() {
+  const list = filtered();
+  $("rail").innerHTML = `
+    <div class="rail-head">
+      <h2>Leads <span class="dim">${list.length}</span></h2>
+      <button class="btn" style="margin-left:auto;height:28px;padding:0 10px" data-act="toast" data-msg="New lead is read-only in this desk.">${ico("plus",14)} New</button>
+    </div>
+    <div class="filters">
+      ${[["all","All"],["mine","Mine"],["star","Starred"],["today","Due today"]].map(([k,l]) =>
+        `<button class="chip ${state.filter===k?"on":""}" data-act="filter" data-k="${k}">${l}</button>`).join("")}
+    </div>
+    <div class="lead-list pane">
+      ${list.map((l,i) => `
+        <button class="lead-row ${l.id===state.selected?"on":""}" data-act="select" data-id="${l.id}">
+          <span class="idx">${i+1}</span>
+          <span class="av" style="background:${hue(l.company)}">${esc(initials(l.contact))}</span>
+          <span>
+            <div class="co">${esc(l.company)}</div>
+            <div class="nm">${esc(displayName(l.contact))}</div>
+          </span>
+          <span class="right">
+            <span class="amt">${money(l.avg)}</span>
+            <span class="ago">${esc(l.lastAgo)}</span>
+          </span>
+        </button>`).join("") || `<div class="empty">No leads match.</div>`}
+    </div>`;
 }

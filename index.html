@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Leads · Forge CRM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+<script>
+(async () => {
+  const files = ["p1.txt", "p2.txt", "p3.txt", "p4.txt", "p5.txt"];
+  const parts = [];
+  for (const u of files) {
+    const r = await fetch(u, { cache: "no-store" });
+    if (!r.ok) throw new Error("Missing " + u);
+    parts.push(await r.text());
+  }
+  document.open();
+  document.write(parts.join(""));
+  document.close();
+})().catch((e) => {
+  document.body.textContent = "Could not load the desk. " + e.message;
+});
+</script>
+</body>
+</html>

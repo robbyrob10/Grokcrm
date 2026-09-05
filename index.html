@@ -1,26 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<title>Leads · Forge CRM</title>
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Leads · Forge CRM</title>
+<meta name="theme-color" content="#F3F5F7" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="desk.css" />
 </head>
 <body>
-<script>
-(async () => {
-  const files = ["p1.txt", "p2.txt", "p3.txt", "p4.txt", "p5.txt"];
-  const parts = [];
-  for (const u of files) {
-    const r = await fetch(u, { cache: "no-store" });
-    if (!r.ok) throw new Error("Missing " + u);
-    parts.push(await r.text());
-  }
-  document.open();
-  document.write(parts.join(""));
-  document.close();
-})().catch((e) => {
-  document.body.textContent = "Could not load the desk. " + e.message;
-});
-</script>
+<div class="app" id="app">
+  <header class="header">
+    <div class="traffic" aria-hidden="true"><b class="r"></b><b class="y"></b><b class="g"></b></div>
+    <div class="word">Forge<span>CRM</span></div>
+    <nav class="nav-links">
+      <a href="#" class="on">Leads</a>
+      <a href="#" data-act="toast" data-msg="Pipeline board is not in this desk.">Pipeline</a>
+      <a href="#" data-act="comms-tab" data-k="all">Inbox</a>
+    </nav>
+    <label class="search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+      <input id="q" placeholder="Search leads, phones, companies" autocomplete="off" />
+      <kbd>/</kbd>
+    </label>
+    <div class="header-actions">
+      <span class="live" id="livePill"><i></i> On a call</span>
+      <div class="avatar" title="Cole Brennan">CB</div>
+    </div>
+  </header>
+  <div class="main" id="main">
+    <aside class="rail" id="rail"><div class="empty" style="padding:28px 20px;line-height:1.5">This preview isn’t running the desk.<br><br>On iPhone: tap the share button → <strong>Open in Safari</strong>. Files preview blocks JavaScript, so the leads stay blank.</div></aside>
+    <div class="handle" data-side="rail" title="Drag to resize · double-click to reset"></div>
+    <section class="desk" id="desk"></section>
+    <div class="handle" data-side="dock" title="Drag to resize · double-click to reset"></div>
+    <aside class="dock" id="dock"></aside>
+  </div>
+</div>
+<div class="pad-pop" id="padPop"></div>
+<div class="overlay" id="overlay"></div>
+<div class="toast" id="toast"></div>
+<script src="data.js"></script>
+<script src="app1.js"></script>
+<script src="app2.js"></script>
 </body>
 </html>

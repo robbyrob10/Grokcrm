@@ -37,20 +37,20 @@ function renderComms(l) {
   }
   return `<div style="padding:8px 16px 16px">
     <div class="cgroup"><h4>Mobile</h4>
-    ${l.mobiles.map((p) => `<div class="line"><span class="val">${esc(p.n)}</span>${qactPhone(p.n, l.contact, true, true)}</div>`).join("")}</div>
+    ${l.mobiles.map((p,i) => `<div class="line"><span class="lab">${i+1}</span><span class="val">${esc(p.n)}</span>${qactPhone(p.n, l.contact, true, true)}</div>`).join("")}</div>
     <div class="cgroup"><h4>Email</h4>
-    ${l.emails.map(p => `<div class="line"><span class="val">${esc(p.n)}</span><div class="qacts"><button data-act="email-one" data-n="${esc(p.n)}">${ico("mail",15)}</button></div></div>`).join("")}
+    ${l.emails.map(p => `<div class="line"><span class="lab"></span><span class="val">${esc(p.n)}</span><div class="qacts"><button data-act="email-one" data-n="${esc(p.n)}">${ico("mail",15)}</button></div></div>`).join("")}
     <button class="email-all" data-act="email-all">Email All</button></div>
     <div class="cgroup"><h4>Landline</h4>
-    ${l.landlines.map((p) => `<div class="line"><span class="val">${esc(p.n)}</span>${qactPhone(p.n, l.contact, false, false)}</div>`).join("")}</div>
+    ${l.landlines.map((p,i) => `<div class="line"><span class="lab">${i+1}</span><span class="val">${esc(p.n)}</span>${qactPhone(p.n, l.contact, false, false)}</div>`).join("")}</div>
   </div>`;
 }
 
 function renderDialer(l, d) {
-  const live = ["connected","hold","dialing"].includes(d.status);
+  const live = ["connected","dialing"].includes(d.status);
   const who = d.contact || displayName(l.contact);
   const num = d.number || l.mobiles[0].n;
-  const st = d.status==="idle" ? "Ready" : d.status==="dialing" ? "Calling" : d.status==="hold" ? "Hold" : d.status==="incoming" ? "Incoming" : "Connected";
+  const st = d.status==="idle" ? "Ready" : d.status==="dialing" ? "Calling" : "Connected";
   return `<div class="dialer">
     <div class="who">
       <div class="nm">${esc(who)}</div>
@@ -62,7 +62,6 @@ function renderDialer(l, d) {
     </div>
     <div class="dacts">
       ${d.status==="idle" || d.status==="ended" ? `
-        <button data-act="devices" title="Device">${ico("phone",14)}</button>
         <button data-act="toggle-pad" class="${state.keypadOpen?"on":""}" title="Keypad">${ico("grid",14)}</button>
         <button class="callgo" data-act="call" data-n="${esc(num)}" data-who="${esc(who)}">Call</button>` : `
         <button data-act="mute" class="${d.muted?"on":""}" title="Mute">${ico("mic",14)}</button>
@@ -74,7 +73,8 @@ function renderDialer(l, d) {
 }
 
 function renderAll() {
-  $("livePill").classList.toggle("show", ["connected","hold","dialing"].includes(state.dial.status));
+  $("livePill").classList.toggle("show", ["connected","dialing"].includes(state.dial.status));
+  paintBt();
   renderRail();
   renderDesk();
   renderDock();

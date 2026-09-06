@@ -17,7 +17,7 @@
 
   function renderList() {
     $("fileList").innerHTML = list().map(r => `
-      <button type="button" class="file-row ${r.id === sel.id ? "on" : "}" data-id="${esc(r.id)}">
+      <button type="button" class="file-row ${r.id === sel.id ? "on" : ""}" data-id="${esc(r.id)}">
         <div class="mark" style="background:${hue(r.acct.name)}">${esc(bankMark(r.acct.name))}</div>
         <div>
           <div class="t">${esc(r.lead.dba)}</div>

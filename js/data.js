@@ -1,22 +1,19 @@
 const DEVICES = [
-  {id:"poly", name:"Poly Edge E450", kind:"Desk", did:"(212) 555-0140", q:4, on:true},
-  {id:"mobile", name:"iPhone 16 Pro", kind:"Cellular", did:"(917) 555-0166", q:3, on:true},
-  {id:"bt", name:"AirPods Pro", kind:"Bluetooth", did:"via iPhone", q:3, on:true},
-  {id:"web", name:"Forge desktop", kind:"PC / WebRTC", did:"(212) 555-0140", q:4, on:true},
-  {id:"backup", name:"Backup DID", kind:"Twilio", did:"(646) 555-0199", q:2, on:false}
+  {id:"poly", name:"Poly Edge E450", kind:"Desk", did:"(212) 555-0140", on:true},
+  {id:"mobile", name:"iPhone 16 Pro", kind:"Cellular", did:"(917) 555-0166", on:true},
+  {id:"bt", name:"AirPods Pro", kind:"Bluetooth", did:"via iPhone", on:true},
+  {id:"web", name:"Forge desktop", kind:"PC / WebRTC", did:"(212) 555-0140", on:true},
+  {id:"backup", name:"Backup DID", kind:"Twilio", did:"(646) 555-0199", on:false}
 ];
-const AGOS = ["30m ago","1h ago","3h ago","1d ago","2d ago","4d ago","1w ago","2w ago"];
 const LEADS = [
   {id:"ns", company:"Northstar Catering Co.", dba:"Northstar", contact:"Elena Voss", title:"Owner / CEO", industry:"Catering · 2 units", city:"Manhattan, NY",
-    avg:250000, ask:150000, offer:125000, pos:"2nd", rep:"Cole Brennan", source:"ISO · Harbor Point FG-NS-1844", employees:34, started:"March 2019", tib:"7 years 6 months",
+    avg:250000, ask:150000, offer:125000, pos:"2nd", rep:"Cole Brennan", source:"ISO · Harbor Point FG-NS-1844", started:"March 2019", tib:"7 years 6 months",
     entity:"New York S-Corporation", ein:"11-2234419", ssn:"078-05-1120", dob:"March 14, 1984",
     address:"412 W 37th St, New York, NY 10018", appAddress:"88 Gold St, Long Island City, NY 11101", website:"northstarcatering.com",
     lastAgo:"30m ago",
     mobiles:[{l:"Mobile",n:"(917) 555-0142"},{l:"Mobile 2",n:"(917) 555-8831"},{l:"WhatsApp",n:"(347) 555-0142"}],
     landlines:[{l:"Office",n:"(212) 555-0188"},{l:"Kitchen",n:"(212) 555-0160"}],
     emails:[{l:"Work",n:"elena@northstarcatering.com"},{l:"Ops",n:"ops@northstarcatering.com"},{l:"Personal",n:"elena.voss@gmail.com"}],
-    months:[218,226,241,233,248,261,244,252,238,249,258,250],
-    monthLabs:["S","O","N","D","J","F","M","A","M","J","J","A"],
     nsf:[0,0,1,0,0,0,1,0,2,1,1,0],
     bank:{name:"Chase Business Complete", acct:"4482014419", routing:"021000021", type:"Checking", adb:28400, bal:41220},
     stmts:[{m:"August 2026", dep:250000, end:41220},{m:"July 2026", dep:258000, end:38640}],
@@ -47,18 +44,16 @@ const LEADS = [
     ],
     analysis:"$250k average monthly deposits. RapidCap first at $612/day (~$13.4k/mo). Combined with a $125k 2nd at 1.32 / 10 mo ($548/day) holdback stays under 19% of daily deposits.",
     pitch:"Elena, you clear $250k a month across both kitchens. RapidCap is a comfortable first. A $125k second at 1.32 keeps combined daily under 19% of deposits — and that’s before Aramark starts in October. Don’t refinance RapidCap into a 1.41 first; stack cheaper money behind it and buy the LIC equipment on time.",
-    use:"LIC kitchen equipment + opening float", fav:true, follow:"2026-09-05", tracked:true
+    use:"LIC kitchen equipment + opening float", fav:true, follow:"2026-09-05"
   },
   {id:"hl", company:"Harborline Logistics", dba:"Harborline", contact:"Marcus Chen", title:"President", industry:"Trucking · 18 cabs", city:"Newark, NJ",
-    avg:300000, ask:200000, offer:175000, pos:"1st", rep:"Cole Brennan", source:"Inbound web FG-HL-2091", employees:41, started:"June 2016", tib:"10 years 3 months",
+    avg:300000, ask:200000, offer:175000, pos:"1st", rep:"Cole Brennan", source:"Inbound web FG-HL-2091", started:"June 2016", tib:"10 years 3 months",
     entity:"New Jersey LLC", ein:"22-1188821", ssn:"142-22-8831", dob:"August 2, 1979",
     address:"88 Doremus Ave, Newark, NJ 07105", appAddress:"88 Doremus Ave, Newark, NJ 07105", website:"harborlinelog.com",
     lastAgo:"1h ago",
     mobiles:[{l:"Mobile",n:"(973) 555-0144"},{l:"Mobile 2",n:"(973) 555-2290"},{l:"WhatsApp",n:"(973) 555-0144"}],
     landlines:[{l:"Dispatch",n:"(973) 555-0170"},{l:"Office",n:"(973) 555-0171"}],
     emails:[{l:"Work",n:"marcus@harborlinelog.com"},{l:"Controller",n:"alba@harborlinelog.com"},{l:"Personal",n:"mchen.haul@gmail.com"}],
-    months:[268,274,288,279,292,310,298,305,286,296,312,300],
-    monthLabs:["S","O","N","D","J","F","M","A","M","J","J","A"],
     nsf:[0,1,0,0,0,0,0,1,0,0,0,0],
     bank:{name:"TD Bank Business", acct:"3319088821", routing:"031201360", type:"Checking", adb:41200, bal:66740},
     stmts:[{m:"August 2026", dep:300000, end:66740},{m:"July 2026", dep:312000, end:58110}],

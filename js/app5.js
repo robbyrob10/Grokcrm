@@ -1,7 +1,7 @@
 function hang() {
   const l = lead();
   const dur = fmtElapsed(state.dial.elapsed);
-  if (state.dial.status === "connected" || state.dial.status === "hold") {
+  if (state.dial.status === "connected") {
     l.calls.unshift({who: state.dial.contact, dir:"out", dur, when:"Just now", dev: device().name, n: state.dial.number, note:"Logged from dialer."});
     l.activity.unshift({when:"Just now", what:`Call · ${state.dial.contact} · ${dur}`});
     l.lastAgo = "just now";
@@ -40,7 +40,16 @@ document.addEventListener("click", (e) => {
     return;
   }
   if (act === "devices") { state.modal = {type:"devices"}; renderModal(); return; }
-  if (act === "set-device") { state.dial.device = b.dataset.id; state.modal = null; renderAll(); toast(device().name); return; }
+  if (act === "toggle-dev") {
+    const d = DEVICES.find(x => x.id === b.dataset.id);
+    if (!d) return;
+    d.on = !d.on;
+    paintBt();
+    renderModal();
+    toast(d.name + (d.on ? " on" : " off"));
+    return;
+  }
+  if (act === "set-device") { state.dial.device = b.dataset.id; state.modal = null; renderAll(); toast("Calling as " + device().name); return; }
   if (act === "sms" || act === "wa") {
     state.threadN = b.dataset.n;
     state.threadCh = act === "wa" ? "wa" : "sms";
@@ -66,9 +75,9 @@ document.addEventListener("click", (e) => {
     const v = $("cTpl").value;
     const first = displayName(l.contact).split(" ")[0];
     const map = {
-      term: {s:"Term sheet \u2014 " + l.company, b:`<div>Hi ${first},</div><div><br></div><div>Term sheet is attached. ${money(l.offer || l.ask)} as discussed. Call me when you\u2019ve had a look.</div>`},
-      stip: {s:"Stips outstanding \u2014 " + l.company, b:`<div>Hi ${first},</div><div><br></div><div>Need the remaining statements to lock the file. Everything else is in.</div>`},
-      intro:{s:"Intro \u2014 " + l.company, b:`<div>Hi ${first},</div><div><br></div><div>Elena suggested we talk. I help shops like yours with working capital. Ten minutes this week?</div>`}
+      term: {s:"Term sheet — " + l.company, b:`<div>Hi ${first},</div><div><br></div><div>Term sheet is attached. ${money(l.offer || l.ask)} as discussed. Call me when you’ve had a look.</div>`},
+      stip: {s:"Stips outstanding — " + l.company, b:`<div>Hi ${first},</div><div><br></div><div>Need the remaining statements to lock the file. Everything else is in.</div>`},
+      intro:{s:"Intro — " + l.company, b:`<div>Hi ${first},</div><div><br></div><div>Elena suggested we talk. I help shops like yours with working capital. Ten minutes this week?</div>`}
     };
     if (map[v]) { $("cSub").value = map[v].s; $("cBody").innerHTML = map[v].b + `<div><br></div><div>Cole Brennan<br>Forge · Merchant desk</div>`; }
     return;

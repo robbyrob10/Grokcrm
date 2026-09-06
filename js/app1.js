@@ -22,7 +22,7 @@ function stmtPaper(l, ai, si, page) {
     const names = ["ACH credit · batch", "Card settlement", "Wire in", "Counter credit", "ACH debit · vendor", "Payroll", "Rent draft"];
     const nm = names[(i + p) % names.length];
     const credit = !/debit|payroll|rent/i.test(nm);
-    return `<tr><td>${esc(s.m.slice(0,3))} ${day}</td><td>${nm}</td><td class="end">${credit ? money(amt) : "\u2212" + money(amt)}</td></tr>`;
+    return `<tr><td>${esc(s.m.slice(0,3))} ${day}</td><td>${nm}</td><td class="end">${credit ? money(amt) : "−" + money(amt)}</td></tr>`;
   }).join("");
   return `<div class="stamp">SCANNED · ${p+1}/${pages}</div>
     <div class="bank">${esc(a.name.toUpperCase())}</div>

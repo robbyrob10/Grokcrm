@@ -107,11 +107,19 @@ function renderModal() {
     return;
   }
   if (m.type === "devices") {
-    ov.innerHTML = `<div class="modal"><div class="row-between"><h2 style="font-size:16px">Calling as</h2><button class="icon-btn" data-act="close">${ico("x")}</button></div>
-      ${DEVICES.map(d => `<button class="lead-row ${d.id===state.dial.device?"on":""}" data-act="set-device" data-id="${d.id}" style="padding-left:12px">
-        <span class="av" style="background:${d.on?"#0F766E":"#8B949E"}">${ico("phone",14)}</span>
-        <span><div class="co">${esc(d.name)}</div><div class="nm">${esc(d.kind)} · ${esc(d.did)} · ${d.on?"On":"Off"}</div></span>
-      </button>`).join("")}</div>`;
+    ov.innerHTML = `<div class="modal">
+      <div class="row-between"><h2 style="font-size:16px">Phones</h2><button class="icon-btn" data-act="close">${ico("x")}</button></div>
+      <p class="dim" style="margin:8px 0 4px">Green Bluetooth means a phone is on. Tap a row to call as that line.</p>
+      <div class="dev-list">${DEVICES.map(d => `
+        <div class="dev-item ${d.id===state.dial.device?"on-row":""}">
+          <span class="av" style="background:${d.on?"#3A3F46":"#C5CAD0"}">${ico("phone",14)}</span>
+          <button data-act="set-device" data-id="${d.id}" style="border:0;background:transparent;text-align:left;padding:0;color:inherit">
+            <div class="co">${esc(d.name)}</div>
+            <div class="nm">${esc(d.kind)} · ${esc(d.did)}</div>
+          </button>
+          <button class="toggle ${d.on?"on":""}" data-act="toggle-dev" data-id="${d.id}">${d.on?"On":"Off"}</button>
+        </div>`).join("")}</div>
+    </div>`;
     return;
   }
   if (m.type === "mail-read") {
@@ -130,7 +138,7 @@ function startCall(n, who) {
   state.dial.status = "dialing";
   state.dial.number = n;
   state.dial.contact = who || displayName(lead().contact);
-  state.dial.muted = false; state.dial.hold = false; state.dial.elapsed = 0; state.dial.dtmf = "";
+  state.dial.muted = false; state.dial.elapsed = 0; state.dial.dtmf = "";
   renderAll();
   setTimeout(() => {
     if (state.dial.status !== "dialing") return;
@@ -142,7 +150,7 @@ function startCall(n, who) {
 function startTick() {
   clearInterval(tick);
   tick = setInterval(() => {
-    if (state.dial.status !== "connected" && state.dial.status !== "hold") return;
+    if (state.dial.status !== "connected") return;
     state.dial.elapsed = Math.floor((Date.now() - state.dial.started) / 1000);
     const t = $("timer");
     if (t) t.textContent = fmtElapsed(state.dial.elapsed);

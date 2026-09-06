@@ -1,14 +1,12 @@
 LEADS.push(
   {id:"lu", company:"Lumen & Co. Interiors", dba:"Lumen", contact:"Sable Whitaker", title:"Principal", industry:"Commercial interiors", city:"Brooklyn, NY",
-    avg:450000, ask:90000, offer:null, pos:"1st", rep:"Cole Brennan", source:"Referral · Northstar FG-LU-5501", employees:7, started:"February 2021", tib:"5 years 7 months",
+    avg:450000, ask:90000, offer:null, pos:"1st", rep:"Cole Brennan", source:"Referral · Northstar FG-LU-5501", started:"February 2021", tib:"5 years 7 months",
     entity:"New York LLC", ein:"47-3355501", ssn:"112-80-5501", dob:"January 4, 1988",
     address:"64 N 9th St, Brooklyn, NY 11249", appAddress:"64 N 9th St, Brooklyn, NY 11249", website:"lumenandco.com",
     lastAgo:"2d ago",
     mobiles:[{l:"Mobile",n:"(347) 555-0177"},{l:"Mobile 2",n:"(917) 555-0177"},{l:"WhatsApp",n:"(347) 555-0177"}],
     landlines:[{l:"Studio",n:"(718) 555-0177"},{l:"Showroom",n:"(718) 555-0178"}],
     emails:[{l:"Work",n:"sable@lumenandco.com"},{l:"Studio",n:"studio@lumenandco.com"},{l:"Personal",n:"sable.whit@gmail.com"}],
-    months:[390,410,430,405,448,470,422,418,455,442,438,450],
-    monthLabs:["S","O","N","D","J","F","M","A","M","J","J","A"],
     nsf:[0,0,0,0,0,0,0,0,0,0,0,0],
     bank:{name:"Mercury", acct:"2044885501", routing:"121145822", type:"Checking", adb:38800, bal:47450},
     stmts:[{m:"August 2026", dep:450000, end:47450},{m:"July 2026", dep:438000, end:40110}],
@@ -26,15 +24,13 @@ LEADS.push(
     use:"Showroom buildout", fav:false, follow:null
   },
   {id:"mw", company:"Marlowe Wine Bar", dba:"Marlowe", contact:"Tess Marlowe", title:"Owner", industry:"Bar / restaurant", city:"West Village, NY",
-    avg:500000, ask:110000, offer:90000, pos:"2nd", rep:"Cole Brennan", source:"ISO · VineCredit FG-MW-9088", employees:22, started:"August 2018", tib:"8 years 1 month",
+    avg:500000, ask:110000, offer:90000, pos:"2nd", rep:"Cole Brennan", source:"ISO · VineCredit FG-MW-9088", started:"August 2018", tib:"8 years 1 month",
     entity:"New York LLC", ein:"82-4499088", ssn:"066-18-9088", dob:"July 30, 1985",
     address:"18 Barrow St, New York, NY 10014", appAddress:"18 Barrow St, New York, NY 10014", website:"marlowewine.com",
     lastAgo:"4d ago",
     mobiles:[{l:"Mobile",n:"(917) 555-0118"},{l:"Mobile 2",n:"(646) 555-0118"},{l:"WhatsApp",n:"(917) 555-0118"}],
     landlines:[{l:"Bar",n:"(212) 555-0118"},{l:"Office",n:"(212) 555-0119"}],
     emails:[{l:"Work",n:"tess@marlowewine.com"},{l:"GM",n:"gm@marlowewine.com"},{l:"Personal",n:"tess.marlowe@gmail.com"}],
-    months:[462,470,478,481,492,510,498,488,474,486,504,500],
-    monthLabs:["S","O","N","D","J","F","M","A","M","J","J","A"],
     nsf:[0,0,0,1,0,0,0,0,0,1,0,0],
     bank:{name:"Chase", acct:"3301199088", routing:"021000021", type:"Checking", adb:29600, bal:32100},
     stmts:[{m:"August 2026", dep:500000, end:32100},{m:"July 2026", dep:504000, end:28840}],
@@ -49,6 +45,6 @@ LEADS.push(
     activity:[{when:"4d ago",what:"WhatsApp · $90k vs buyout"},{when:"4d ago",what:"Call · 7m 55s"}],
     analysis:"$500k bar. VineCredit 1st remaining $22k. $90k 2nd at 1.36, or buyout to a $110k first.",
     pitch:"Tess, $110k as a second doesn’t clear. Two options: $90k second at 1.36 live in a week, or buy out VineCredit and write a $110k first at 1.32.",
-    use:"Garden expansion", fav:true, follow:"2026-09-05", tracked:true
+    use:"Garden expansion", fav:true, follow:"2026-09-05"
   }
 );

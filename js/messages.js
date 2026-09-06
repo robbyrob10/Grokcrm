@@ -17,7 +17,7 @@
     $("convoList").innerHTML = convos().map(l => {
       const last = lastSms(l);
       const unread = unreadOf(l);
-      return `<button type="button" class="convo ${l.id === sel.id ? "on" : "}" data-id="${esc(l.id)}">
+      return `<button type="button" class="convo ${l.id === sel.id ? "on" : ""}" data-id="${esc(l.id)}">
         <div class="av" style="background:${hue(l.contact)}">${esc(initials(l.contact))}</div>
         <div>
           <div class="t">${esc(displayName(l.contact))}${unread ? '<i class="unread"></i>' : ""}</div>
@@ -38,15 +38,9 @@
       </div>
       <a class="btn" href="index.html?lead=${esc(l.id)}">Lead</a>`;
     $("thread").innerHTML = (l.sms || []).map(m =>
-      `<div class="bubble ${m.dir}${m.ch === "wa" ? " wa" : "}">${esc(m.txt)}<div style="font-size:11px;opacity:.65;margin-top:4px">${esc(m.t)}${m.ch === "wa" ? " · WhatsApp" : ""}</div></div>`
+      `<div class="bubble ${m.dir}${m.ch === "wa" ? " wa" : ""}">${esc(m.txt)}<div style="font-size:11px;opacity:.65;margin-top:4px">${esc(m.t)}${m.ch === "wa" ? " · WhatsApp" : ""}</div></div>`
     ).join("") || `<div class="empty">No messages yet.</div>`;
     $("thread").scrollTop = $("thread").scrollHeight;
-  }
-
-  function renderDevs() {
-    $("devs").innerHTML = DEVICES.map(d =>
-      `<span><b>${esc(d.name)}</b> · ${esc(d.kind)} · ${esc(d.did)} · <span class="${d.on ? "on" : "off"}">${d.on ? "connected" : "idle"}</span></span>`
-    ).join("");
   }
 
   function render() { renderList(); renderThread(); }
@@ -70,6 +64,5 @@
     render();
     toast("Sent");
   }
-  renderDevs();
   render();
 })();

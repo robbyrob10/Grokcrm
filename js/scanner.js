@@ -19,7 +19,7 @@
     const accts = new Set(all.map(r => r.acct.acct)).size;
     $("scanMeta").innerHTML = `<b>${list.length}</b> statements · <b>${accts}</b> accounts`;
     $("chips").innerHTML = MONTHS.map(m =>
-      `<button type="button" data-m="${m}" class="${m === filter ? "on" : "}">${m}</button>`
+      `<button type="button" data-m="${m}" class="${m === filter ? "on" : ""}">${m}</button>`
     ).join("");
     $("grid").innerHTML = list.map(r => {
       const nsfCls = r.nsf ? "bad" : "";

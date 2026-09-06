@@ -24,7 +24,7 @@
     const list = events();
     if (!sel || !list.some(e => e === sel)) sel = list[0] || null;
     $("feed").innerHTML = list.map((e, i) => `
-      <button type="button" class="feed-row ${sel === e ? "on" : "}" data-i="${i}">
+      <button type="button" class="feed-row ${sel === e ? "on" : ""}" data-i="${i}">
         <div class="av" style="background:${hue(e.l.contact)}">${esc(initials(e.l.contact))}</div>
         <div>
           <div class="t">${esc(e.title)}</div>
@@ -41,7 +41,7 @@
     let body = "";
     if (e.kind === "msg") {
       body = (l.sms || []).map(m =>
-        `<div class="bubble ${m.dir}${m.ch === "wa" ? " wa" : "}">${esc(m.txt)}<div style="font-size:11px;opacity:.65;margin-top:4px">${esc(m.t)}</div></div>`
+        `<div class="bubble ${m.dir}${m.ch === "wa" ? " wa" : ""}">${esc(m.txt)}<div style="font-size:11px;opacity:.65;margin-top:4px">${esc(m.t)}</div></div>`
       ).join("");
     } else if (e.kind === "call") {
       const c = e.raw;

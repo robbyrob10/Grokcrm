@@ -1,18 +1,19 @@
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&"+"amp;","<":"&"+"lt;",">":"&"+"gt;",'"':"&"+"quot;","'":"&#39;"}[c]));
-const money = (n) => n == null ? "\u2014" : "$" + Math.round(n).toLocaleString("en-US");
+const money = (n) => n == null ? "—" : "$" + Math.round(n).toLocaleString("en-US");
 const params = () => new URLSearchParams(location.search);
 
 function displayName(n) { return String(n).replace(/^Dr\.\s+/i, ""); }
 function hue(str) {
   const pal = {ns:"#2B6E72",hl:"#9A5628",bd:"#8A7020",ro:"#4E6230",lu:"#2E6A48",mw:"#7A3E50",kp:"#3A5480",ap:"#8A3A32"};
+  const rest = ["#5C5348","#2B6E72","#9A5628","#8A7020","#4E6230","#2E6A48","#7A3E50","#3A5480","#8A3A32"];
   const s = String(str || "");
   if (typeof LEADS !== "undefined") {
     const l = LEADS.find(x => x.id===s || x.company===s || x.contact===s || displayName(x.contact)===s);
     if (l && pal[l.id]) return pal[l.id];
   }
   let h = 0; for (const c of s) h = (h * 33 + c.charCodeAt(0)) >>> 0;
-  return "hsl(" + ((h * 137) % 360) + " 40% 36%)";
+  return rest[h % rest.length];
 }
 function initials(n) {
   return displayName(n).split(/\s+/).slice(0, 2).map(p => p[0]).join("").toUpperCase();
@@ -20,18 +21,7 @@ function initials(n) {
 function ico(name, s=16) {
   const p = {
     phone: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6.4 6.4l1.2-1.2a2 2 0 0 1 2.1-.4c.8.2 1.7.5 2.6.6a2 2 0 0 1 1.7 2Z"/>',
-    mail: '<path d="M4 4h16v16H4z"/><path d="m4 4 8 9 8-9"/>',
-    sms: '<path d="M4 4h16v12H7l-3 4V4z"/>',
-    wa: '<path d="M12 3a8 8 0 0 0-6.9 12.1L4 21l6-1.1A8 8 0 1 0 12 3z"/><path d="M9.2 9.6c.2-.5.3-.5.6-.5h.5c.2 0 .3.1.4.4l.6 1.5c.1.2 0 .4-.1.5l-.4.4c-.1.1-.1.3 0 .4.3.5.8 1 1.3 1.3.2.1.3.1.4 0l.4-.4c.2-.2.4-.2.5-.1l1.5.6c.2.1.4.2.4.4v.5c0 .2 0 .4-.5.6A6 6 0 0 1 9.2 9.6z"/>',
-    search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/>',
-    plus: '<path d="M12 5v14M5 12h14"/>',
-    x: '<path d="M6 6l12 12M18 6 6 18"/>',
-    send: '<path d="M4 12h16M14 6l6 6-6 6"/>',
-    check: '<path d="M5 12.5l4 4 10-10"/>',
-    chevL: '<path d="M15 6l-6 6 6 6"/>',
-    chevR: '<path d="M9 6l6 6-6 6"/>',
-    doc: '<path d="M7 3h8l5 5v13H7z"/><path d="M15 3v5h5"/>',
-    ext: '<path d="M14 4h6v6"/><path d="M10 14 20 4"/><path d="M20 14v6H4V4h6"/>'
+    x: '<path d="M6 6l12 12M18 6 6 18"/>'
   };
   return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${p[name]||""}</svg>`;
 }
@@ -104,3 +94,56 @@ function unreadOf(l) {
   const last = lastSms(l);
   return last && last.dir === "in" ? 1 : 0;
 }
+
+(function bootPhones() {
+  function connected() {
+    return DEVICES.some(d => d.on && (d.id === "poly" || d.id === "mobile" || d.id === "web"));
+  }
+  function paint() {
+    const b = $("btBtn");
+    if (!b) return;
+    b.classList.toggle("on", connected());
+    b.classList.toggle("off", !connected());
+  }
+  function close() {
+    const ov = $("overlay");
+    if (!ov) return;
+    ov.className = "overlay";
+    ov.innerHTML = "";
+  }
+  function open() {
+    const ov = $("overlay");
+    if (!ov) return;
+    ov.className = "overlay open";
+    ov.innerHTML = `<div class="modal">
+      <div class="row-between"><h2 style="font-size:16px">Phones</h2><button class="icon-btn" data-act="close" type="button">${ico("x")}</button></div>
+      <p class="dim" style="margin:8px 0 4px">Green Bluetooth means a phone is on.</p>
+      <div class="dev-list">${DEVICES.map(d => `
+        <div class="dev-item">
+          <span class="av" style="background:${d.on?"#3A3F46":"#C5CAD0"}">${ico("phone",14)}</span>
+          <span>
+            <div class="co">${esc(d.name)}</div>
+            <div class="nm">${esc(d.kind)} · ${esc(d.did)}</div>
+          </span>
+          <button class="toggle ${d.on?"on":""}" data-act="toggle-dev" data-id="${d.id}" type="button">${d.on?"On":"Off"}</button>
+        </div>`).join("")}</div>
+    </div>`;
+  }
+  document.addEventListener("click", (e) => {
+    if (e.target && e.target.id === "overlay") { close(); return; }
+    const b = e.target.closest("[data-act]");
+    if (!b) return;
+    const act = b.dataset.act;
+    if (act === "devices") { open(); e.preventDefault(); return; }
+    if (act === "close") { close(); return; }
+    if (act === "toggle-dev") {
+      const d = DEVICES.find(x => x.id === b.dataset.id);
+      if (!d) return;
+      d.on = !d.on;
+      paint();
+      open();
+      toast(d.name + (d.on ? " on" : " off"));
+    }
+  });
+  paint();
+})();

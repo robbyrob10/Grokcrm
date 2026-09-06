@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=1280" />
 <title>Pipeline · Forge CRM</title>
 <meta name="theme-color" content="#F3F5F7" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -32,6 +32,10 @@
     </label>
     <div class="header-actions">
       <span class="live" id="livePill"><i></i> On a call</span>
+      <button type="button" class="bt-btn off" id="btBtn" data-act="devices" title="Phones" aria-label="Phones">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7l10 10-5 5V2l5 5L7 17"/></svg>
+        <i></i>
+      </button>
       <div class="avatar" title="Cole Brennan">CB</div>
     </div>
   </header>
@@ -45,6 +49,7 @@
     <div class="pipe" id="pipe"></div>
   </div>
 </div>
+<div class="overlay" id="overlay"></div>
 <div class="toast" id="toast"></div>
 <script src="js/data.js"></script>
 <script src="js/data1.js"></script>

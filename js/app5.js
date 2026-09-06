@@ -1,3 +1,22 @@
+function modalPages() {
+  const m = state.modal;
+  if (!m) return 1;
+  if (m.type === "stmt") {
+    const a = accountsOf(lead())[m.ai];
+    return (a && a.stmts[m.si] && a.stmts[m.si].pages) || 6;
+  }
+  if (m.type === "file") return (fileKind(lead(), m.i).pages) || 1;
+  return 1;
+}
+function turnPage(dir) {
+  const m = state.modal;
+  if (!m || (m.type !== "stmt" && m.type !== "file")) return;
+  const pages = modalPages();
+  const next = (m.page || 0) + dir;
+  if (next < 0 || next >= pages) return;
+  m.page = next;
+  renderModal();
+}
 function hang() {
   const l = lead();
   const dur = fmtElapsed(state.dial.elapsed);
@@ -130,17 +149,8 @@ document.addEventListener("click", (e) => {
     renderModal(); return;
   }
   if (act === "file-prev" || act === "file-next") {
-    const dir = act === "file-next" ? 1 : -1;
-    if (state.modal?.type === "stmt") {
-      const a = accountsOf(lead())[state.modal.ai];
-      const n = a.stmts.length;
-      state.modal.si = (state.modal.si + dir + n) % n;
-      state.modal.page = 0;
-      renderModal(); return;
-    }
-    const n = lead().files.length;
-    state.modal = {type: "file", i: ((state.modal.i || 0) + dir + n) % n, page: 0};
-    renderModal(); return;
+    turnPage(act === "file-next" ? 1 : -1);
+    return;
   }
   if (act === "page-go") {
     if (state.modal) { state.modal.page = +b.dataset.p; renderModal(); }
@@ -157,7 +167,34 @@ document.addEventListener("click", (e) => {
   if (act === "toast") { toast(b.dataset.msg); return; }
 });
 
-$("overlay").addEventListener("click", (e) => { if (e.target.id === "overlay") { state.modal = null; renderModal(); }});
+$("overlay").addEventListener("click", (e) => {
+  if (e.target.closest(".modal,.letter-wrap,.lb-arrow,.lb-zoom,.lb-pg,.compose-row,.editor,.tb")) return;
+  state.modal = null;
+  renderModal();
+});
+(function bindViewerGestures() {
+  const ov = $("overlay");
+  let swipe = null;
+  ov.addEventListener("pointerdown", (e) => {
+    if (!e.target.closest(".letter-wrap")) return;
+    swipe = { x: e.clientX, y: e.clientY };
+  });
+  ov.addEventListener("pointerup", (e) => {
+    if (!swipe) return;
+    const dx = e.clientX - swipe.x, dy = e.clientY - swipe.y;
+    swipe = null;
+    if (Math.abs(dx) < 36 && Math.abs(dy) < 36) return;
+    if (Math.abs(dx) > Math.abs(dy)) turnPage(dx < 0 ? 1 : -1);
+    else turnPage(dy > 0 ? 1 : -1);
+  });
+  ov.addEventListener("wheel", (e) => {
+    if (!e.target.closest(".letter-wrap")) return;
+    if (!state.modal || (state.modal.type !== "stmt" && state.modal.type !== "file")) return;
+    e.preventDefault();
+    if (e.deltaY > 24) turnPage(1);
+    else if (e.deltaY < -24) turnPage(-1);
+  }, { passive: false });
+})();
 $("q").addEventListener("input", (e) => { state.query = e.target.value; renderRail(); });
 document.addEventListener("input", (e) => {
   if (e.target && e.target.id === "railQ") {
@@ -171,9 +208,9 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "/" && !/INPUT|TEXTAREA/.test(document.activeElement.tagName) && document.activeElement.isContentEditable !== true) {
     e.preventDefault(); $("q").focus();
   }
-  if (state.modal?.type === "file") {
-    if (e.key === "ArrowLeft") { e.preventDefault(); document.querySelector("[data-act=file-prev]")?.click(); return; }
-    if (e.key === "ArrowRight") { e.preventDefault(); document.querySelector("[data-act=file-next]")?.click(); return; }
+  if (state.modal?.type === "file" || state.modal?.type === "stmt") {
+    if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); turnPage(-1); return; }
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); turnPage(1); return; }
     if (e.key === "+" || e.key === "=") { e.preventDefault(); state.fileZoom = Math.min(2, +(state.fileZoom + 0.1).toFixed(1)); renderModal(); return; }
     if (e.key === "-" || e.key === "_") { e.preventDefault(); state.fileZoom = Math.max(0.8, +(state.fileZoom - 0.1).toFixed(1)); renderModal(); return; }
   }

@@ -27,15 +27,15 @@ document.addEventListener("click", (e) => {
   if (act === "thread-ch") { state.threadCh = b.dataset.k; state.commsTab = "msg"; renderDock(); return; }
   if (act === "call") { startCall(b.dataset.n, b.dataset.who); return; }
   if (act === "hang") { hang(); return; }
-  if (act === "mute") { state.dial.muted = !state.dial.muted; renderDock(); return; }
-  if (act === "spk") { state.dial.speaker = !state.dial.speaker; renderDock(); return; }
+  if (act === "mute") { state.dial.muted = !state.dial.muted; renderDialerBar(); return; }
+  if (act === "spk") { state.dial.speaker = !state.dial.speaker; renderDialerBar(); return; }
   if (act === "toggle-pad") { state.keypadOpen = !state.keypadOpen; placePad(); return; }
   if (act === "dtmf") {
     const k = b.dataset.k;
     if (state.dial.status === "idle") {
       const raw = (state.dial.number || "").replace(/\D/g,"");
       if (raw.length < 10) state.dial.number = (state.dial.number || "") + k;
-      renderDock();
+      renderDialerBar();
     } else { state.dial.dtmf += k; toast("DTMF " + k); }
     return;
   }
@@ -75,7 +75,7 @@ document.addEventListener("click", (e) => {
     const v = $("cTpl").value;
     const first = displayName(l.contact).split(" ")[0];
     const map = {
-      term: {s:"Term sheet — " + l.company, b:`<div>Hi ${first},</div><div><br></div><div>Term sheet is attached. ${money(l.offer || l.ask)} as discussed. Call me when you’ve had a look.</div>`},
+      term: {s:"Term sheet — " + l.company, b:`<div>Hi ${first},</div><div><br></div><div>Term sheet is attached. ${money(roundRev(l.avg) + 150000)} as discussed. Call me when you’ve had a look.</div>`},
       stip: {s:"Stips outstanding — " + l.company, b:`<div>Hi ${first},</div><div><br></div><div>Need the remaining statements to lock the file. Everything else is in.</div>`},
       intro:{s:"Intro — " + l.company, b:`<div>Hi ${first},</div><div><br></div><div>Elena suggested we talk. I help shops like yours with working capital. Ten minutes this week?</div>`}
     };
@@ -138,4 +138,5 @@ document.addEventListener("keydown", (e) => {
   }
   if (e.key === "Escape") { state.modal = null; state.keypadOpen = false; renderAll(); }
 });
-window.addEventListener("resize", placePad);
+window.addEventListener("resize", () => { sizeApp(); placePad(); });
+if (window.visualViewport) window.visualViewport.addEventListener("resize", () => { sizeApp(); placePad(); });

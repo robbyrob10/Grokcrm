@@ -37,6 +37,7 @@
   });
 })();
 
+sizeApp();
 applyWidths();
 try { renderAll(); }
 catch (err) {

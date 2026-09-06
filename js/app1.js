@@ -59,14 +59,21 @@ function applyWidths() {
   document.documentElement.style.setProperty("--rail-w", (r ? +r : 320) + "px");
   document.documentElement.style.setProperty("--dock-w", (d ? +d : 400) + "px");
 }
+function sizeApp() {
+  const vv = window.visualViewport;
+  let h = (vv && vv.height) ? vv.height : window.innerHeight;
+  if (h > 1100) h = 900;
+  h = Math.max(760, Math.min(1100, Math.round(h)));
+  document.documentElement.style.setProperty("--app-h", h + "px");
+}
 function placePad() {
   const pop = $("padPop");
-  const dock = $("dock");
-  if (!pop || !dock) return;
+  const bar = $("dialer");
+  if (!pop || !bar) return;
   if (!state.keypadOpen) { pop.classList.remove("open"); return; }
-  const r = dock.getBoundingClientRect();
-  pop.style.left = (r.right - 244) + "px";
-  pop.style.top = (r.bottom - 75 - 12 - 214) + "px";
+  const r = bar.getBoundingClientRect();
+  pop.style.left = Math.max(8, r.right - 244) + "px";
+  pop.style.top = Math.max(8, r.top - 12 - 214) + "px";
   pop.classList.add("open");
   pop.innerHTML = `<div class="pad">${[["1",""],["2","ABC"],["3","DEF"],["4","GHI"],["5","JKL"],["6","MNO"],["7","PQRS"],["8","TUV"],["9","WXYZ"],["*",""],["0","+"],["#",""]].map(([n,l]) =>
     `<button data-act="dtmf" data-k="${n}">${n}${l?`<small>${l}</small>`:""}</button>`).join("")}</div>`;
@@ -93,7 +100,7 @@ function renderRail() {
             <div class="nm">${esc(displayName(l.contact))}</div>
           </span>
           <span class="right">
-            <span class="amt">${money(l.avg)}</span>
+            <span class="amt">${money(roundRev(l.avg))}</span>
             <span class="ago">${esc(l.lastAgo)}</span>
           </span>
         </button>`).join("") || `<div class="empty">No leads match.</div>`}

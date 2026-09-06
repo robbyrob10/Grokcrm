@@ -1,3 +1,21 @@
+function roundRev(n) {
+  const x = Number(n) || 0;
+  return Math.ceil(x / 50000) * 50000;
+}
+function ownPct(l) {
+  return (l && l.own != null ? l.own : 100) + "%";
+}
+function monthShort(s) {
+  return String(s || "").replace(/\s+20\d{2}/, "");
+}
+function fileShort(f) {
+  const n = String(f && f.n || "").toLowerCase();
+  if (/application|^app$/.test(n)) return "APP";
+  if (/mtd|month-to-date/.test(n)) return "MTD";
+  const m = n.match(/jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec/);
+  if (m) return m[0].toUpperCase();
+  return String(f.n || "").slice(0, 3).toUpperCase();
+}
 function accountsOf(l) {
   return l.accounts || [{name: l.bank.name, acct: l.bank.acct, stmts: l.stmts || []}];
 }
@@ -121,6 +139,7 @@ function paperHtml(l, i) {
         <tr><th>Legal name</th><td>${esc(l.company)}</td></tr>
         <tr><th>DBA</th><td>${esc(l.dba)}</td></tr>
         <tr><th>Owner</th><td>${esc(displayName(l.contact))} · ${esc(l.title)}</td></tr>
+        <tr><th>Ownership</th><td>${esc(ownPct(l))}</td></tr>
         <tr><th>Address</th><td>${esc(l.address)}</td></tr>
         <tr><th>EIN</th><td>${esc(l.ein)}</td></tr>
         <tr><th>Requested</th><td class="end">${money(l.ask)}</td></tr>

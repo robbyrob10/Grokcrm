@@ -51,7 +51,7 @@ function renderDialer(l, d) {
   const who = d.contact || displayName(l.contact);
   const num = d.number || l.mobiles[0].n;
   const st = d.status==="idle" ? "Ready" : d.status==="dialing" ? "Calling" : "Connected";
-  return `<div class="dialer">
+  return `
     <div class="who">
       <div class="nm">${esc(who)}</div>
       <div class="sub">${esc(num)} · ${esc(device().name)}</div>
@@ -68,8 +68,14 @@ function renderDialer(l, d) {
         <button data-act="spk" class="${d.speaker?"on":""}" title="Speaker">${ico("spk",14)}</button>
         <button data-act="toggle-pad" class="${state.keypadOpen?"on":""}" title="Keypad">${ico("grid",14)}</button>
         <button class="hang" data-act="hang">Hang up</button>`}
-    </div>
-  </div>`;
+    </div>`;
+}
+
+function renderDialerBar() {
+  const el = $("dialer");
+  if (!el) return;
+  el.innerHTML = renderDialer(lead(), state.dial);
+  placePad();
 }
 
 function renderAll() {
@@ -78,6 +84,7 @@ function renderAll() {
   renderRail();
   renderDesk();
   renderDock();
+  renderDialerBar();
   renderModal();
 }
 

@@ -40,9 +40,11 @@
     const l = e.l;
     let body = "";
     if (e.kind === "msg") {
-      body = (l.sms || []).map(m =>
-        `<div class="bubble ${m.dir}${m.ch === "wa" ? " wa" : ""}">${esc(m.txt)}<div style="font-size:11px;opacity:.65;margin-top:4px">${esc(m.t)}</div></div>`
-      ).join("");
+      body = (l.sms || []).filter(m => (m.ch || "sms") === (e.ch || "sms") && (m.n || "") === (e.raw.n || m.n || "")).map(m => {
+        const dir = m.dir === "out" ? "out" : "in";
+        const col = dir === "out" ? ((e.ch || m.ch) === "wa" ? "out wa" : "out") : "in";
+        return `<div class="bubble ${col}">${esc(m.txt)}<div style="font-size:11px;opacity:.65;margin-top:4px">${esc(m.t)}</div></div>`;
+      }).join("");
     } else if (e.kind === "call") {
       const c = e.raw;
       body = `<div class="block"><h3>${esc(c.dir === "in" ? "Inbound call" : "Outbound call")}</h3>

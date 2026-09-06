@@ -43,6 +43,13 @@ document.addEventListener("click", (e) => {
     return;
   }
   if (act === "comms-tab") { state.commsTab = b.dataset.k; renderDock(); return; }
+  if (act === "open-thread") {
+    state.threadN = b.dataset.n;
+    state.threadCh = b.dataset.ch || "sms";
+    state.commsTab = "msg";
+    renderDock();
+    return;
+  }
   if (act === "thread-n") { state.threadN = b.dataset.n; state.commsTab = "msg"; renderDock(); return; }
   if (act === "thread-ch") { state.threadCh = b.dataset.k; state.commsTab = "msg"; renderDock(); return; }
   if (act === "call") { startCall(b.dataset.n, b.dataset.who); return; }

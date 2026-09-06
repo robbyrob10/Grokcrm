@@ -71,13 +71,7 @@ function applyWidths() {
   }
 }
 function sizeApp() {
-  const vv = window.visualViewport;
-  const w = (vv && vv.width) || window.innerWidth || 1640;
-  const h = (vv && vv.height) || window.innerHeight || 900;
-  const scale = Math.max(0.35, w / 1640);
-  document.documentElement.style.setProperty("--app-scale", String(scale));
-  const appH = Math.max(700, Math.round(h / scale));
-  document.documentElement.style.setProperty("--app-h", appH + "px");
+  if (window.deskView) window.deskView.relayout();
 }
 function fitLetterZoom() {
   const vv = window.visualViewport;

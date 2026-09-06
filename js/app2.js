@@ -49,23 +49,28 @@ function factsStrip(l) {
   if (!bits.length) return "";
   return `<div class="facts-strip">${bits.map(b => `<span>${esc(b)}</span>`).join("")}</div>`;
 }
-function pdfMark() {
+function pdfMark(lab) {
+  const t = esc(String(lab || "").slice(0, 3));
   return `<svg class="pdf-ico" viewBox="0 0 36 44" width="36" height="44" aria-hidden="true">
     <path d="M7 2h15l9 9v30a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" fill="#F7F6F3" stroke="#1A365D" stroke-width="1.4"/>
     <path d="M22 2v8a1 1 0 0 0 1 1h8" fill="#E8ECF0" stroke="#1A365D" stroke-width="1.4" stroke-linejoin="round"/>
-    <rect x="8.5" y="23" width="19" height="11" rx="1.6" fill="#1A365D"/>
-    <text x="18" y="31.2" text-anchor="middle" fill="#F7F6F3" font-size="7" font-weight="700" font-family="Inter,ui-sans-serif,system-ui,sans-serif" letter-spacing=".06em">PDF</text>
+    <rect x="6.5" y="23" width="23" height="12" rx="1.6" fill="#1A365D"/>
+    <text x="18" y="31.6" text-anchor="middle" fill="#F7F6F3" font-size="7.2" font-weight="700" font-family="Inter,ui-sans-serif,system-ui,sans-serif" letter-spacing=".08em">${t}</text>
   </svg>`;
 }
 function filesStrip(l) {
-  const rank = {APP:0,JAN:1,FEB:2,MAR:3,APR:4,MAY:5,JUN:6,JUL:7,AUG:8,SEP:9,OCT:10,NOV:11,DEC:12,MTD:13};
+  const monthN = {JAN:1,FEB:2,MAR:3,APR:4,MAY:5,JUN:6,JUL:7,AUG:8,SEP:9,OCT:10,NOV:11,DEC:12};
   const items = (l.files || []).map((f, i) => ({ i, lab: fileShort(f) }))
-    .filter(x => x.lab)
-    .sort((a, b) => (rank[a.lab] ?? 50) - (rank[b.lab] ?? 50));
+    .filter(x => x.lab);
+  items.sort((a, b) => {
+    const ra = a.lab === "APP" ? -2 : a.lab === "MTD" ? -1 : (monthN[a.lab] != null ? 20 - monthN[a.lab] : 50);
+    const rb = b.lab === "APP" ? -2 : b.lab === "MTD" ? -1 : (monthN[b.lab] != null ? 20 - monthN[b.lab] : 50);
+    return ra - rb;
+  });
   if (!items.length) return "";
   return `<div class="files-block"><div class="files-k">Files</div><div class="files-row">${items.map(x =>
-    `<button type="button" class="file-doc" data-act="file" data-i="${x.i}" title="${esc(x.lab)} PDF">
-      ${pdfMark()}<span class="lab">${esc(x.lab)}</span>
+    `<button type="button" class="file-doc" data-act="file" data-i="${x.i}" title="${esc(x.lab)}">
+      ${pdfMark(x.lab)}
     </button>`
   ).join("")}</div></div>`;
 }

@@ -20,7 +20,7 @@ const LEADS = [
     mtd:{m:"September 2026", dep:41800, bal:41220},
     mca:[{who:"RapidCap", funded:85000, factor:1.38, daily:612, rem:41200, pos:"1st", started:"May 2026", cad:"Daily ACH"}],
     expenses:[["COGS / food",62000,"monthly","Largest cash-flow pressure — food vendors draft 3–4x a week and leave little slack after RapidCap."],["Payroll",48000,"biweekly"],["Rent (2 sites)",14200,"monthly"],["RapidCap ACH",13464,"daily"]],
-    files:[{n:"Application",t:"PDF",p:"4p"},{n:"August statement",t:"PDF",p:"8p"},{n:"July statement",t:"PDF",p:"8p"},{n:"MTD",t:"PDF",p:"2p"}],
+    files:[{n:"Application",t:"PDF",p:"4p"},{n:"August statement",t:"PDF",p:"8p"},{n:"July statement",t:"PDF",p:"8p"},{n:"June statement",t:"PDF",p:"2p"}],
     notes:[{who:"Cole Brennan",when:"Today 6:14 AM",txt:"Elena walked the LIC buildout on FaceTime. Hood and fire-suppression already in. Wants funds before Oct 1 so she can order equipment without stacking a third advance."}],
     sms:[
       {dir:"in",ch:"wa",n:"(347) 555-0142",t:"Thu 7:21 PM",txt:"Cole — Priya uploaded August last night. Sysco double-draft reversed same day. ✅"},
@@ -60,7 +60,7 @@ const LEADS = [
     mtd:{m:"September 2026", dep:48200, bal:66740},
     mca:[],
     expenses:[["Driver payroll",110000,"weekly","Largest pressure — payroll hits every Friday and fuel floats mid-week."],["Fuel",48000,"weekly"],["Insurance",19000,"monthly"],["Lease trucks",22000,"monthly"]],
-    files:[{n:"Application",t:"PDF",p:"3p"},{n:"August statement",t:"PDF",p:"10p"},{n:"July statement",t:"PDF",p:"9p"},{n:"MTD",t:"PDF",p:"2p"}],
+    files:[{n:"Application",t:"PDF",p:"3p"},{n:"August statement",t:"PDF",p:"10p"},{n:"July statement",t:"PDF",p:"9p"},{n:"June statement",t:"PDF",p:"2p"}],
     notes:[{who:"Cole Brennan",when:"1h ago",txt:"Clean 1st position. Wants $200k for 4 additional daycabs. $175k is the box unless loss-runs land."}],
     sms:[{dir:"out",ch:"sms",t:"1h ago",txt:"Marcus — send the loss-runs and I can push $200k to credit."},{dir:"in",ch:"sms",t:"52m ago",txt:"Alba will email them Monday."}],
     mails:[{sub:"Harborline — file opening",from:"Cole Brennan",to:"marcus@harborlinelog.com",when:"Wed 9:14 AM",preview:"Opened a 1st-position file. Target $175–200k pending insurance."}],

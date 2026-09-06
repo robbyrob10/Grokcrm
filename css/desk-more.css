@@ -42,12 +42,12 @@
 .file-doc .lab{font-family:var(--font);font-size:10px;font-weight:600;letter-spacing:.08em;color:#5C6770}
 .file-doc:hover .pdf-ico path[stroke]{stroke:#0E2A4A}
 .file-doc:hover .lab{color:#1A1F26}
-.stmt-months{display:grid;grid-template-columns:1fr;gap:12px;margin-top:10px;align-items:start}
-.stmt-kv{border:0;background:transparent;text-align:left;padding:0;min-width:0;cursor:pointer;color:inherit;font:inherit;display:flex;flex-direction:column;gap:2px;width:100%}
-.stmt-kv .mo{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-weight:600;margin:0 0 4px}
-.stmt-kv .pair{padding:0;gap:10px 24px}
-.stmt-kv:hover .v,.stmt-kv:hover .vt{color:var(--ok)}
-.banks{display:grid;gap:12px}
+.stmt-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:24px;row-gap:8px;align-items:start}
+.stmt-mo{grid-column:1 / -1;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-weight:600;margin:8px 0 0}
+.stmt-grid > .stmt-mo:first-of-type{margin-top:4px}
+.stmt-cell{border:0;background:transparent;text-align:left;padding:0;min-width:0;cursor:pointer;color:inherit;font:inherit}
+.stmt-cell:hover .v,.stmt-cell:hover .vt{color:var(--ok)}
+.facts-strip{display:none}
 .below{padding:8px 40px 28px}
 .email-head{display:flex;align-items:center;gap:6px;margin:14px 0 8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-weight:600}
 .mail-all-ico{border:0;background:transparent;color:var(--dim);padding:0;display:grid;place-items:center;width:16px;height:16px;flex-shrink:0}

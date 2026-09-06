@@ -25,24 +25,24 @@ function contactBlock(l) {
   }
   return html || `<div class="muted">No contact on file.</div>`;
 }
-function monthKv(a, ai, s, si) {
-  if (!s) return "";
-  const lab = monthShort(s.m);
-  return `<button type="button" class="stmt-kv" data-act="stmt" data-ai="${ai}" data-si="${si}" title="Open ${esc(lab)} statement">
-    <div class="mo">${esc(lab)}</div>
-    ${pair(kv("Dep", money(s.dep)), kv("Bal", money(s.end)))}
-  </button>`;
-}
 function statementsBlock(l) {
   const accts = accountsOf(l).slice(0, 1);
   if (!accts.length) return `<div class="muted">No statements</div>`;
-  return `<div class="banks">${accts.map((a, ai) => {
+  return accts.map((a, ai) => {
     const months = (a.stmts || []).slice(0, 3);
-    return `<div class="bank-col">
-      ${pair(kv("Bank", esc(a.name)), kv("Account", esc(a.acct)))}
-      <div class="stmt-months">${months.map((s, si) => monthKv(a, ai, s, si)).join("")}</div>
+    const rows = months.map((s, si) => {
+      const lab = monthShort(s.m);
+      const open = `type="button" class="stmt-cell" data-act="stmt" data-ai="${ai}" data-si="${si}" title="Open ${esc(lab)} statement"`;
+      return `<div class="stmt-mo">${esc(lab)}</div>
+        <button ${open}>${kv("Dep", money(s.dep))}</button>
+        <button ${open}>${kv("Bal", money(s.end))}</button>`;
+    }).join("");
+    return `<div class="stmt-grid">
+      ${kv("Bank", esc(a.name))}
+      ${kv("Account", esc(a.acct))}
+      ${rows}
     </div>`;
-  }).join("")}</div>`;
+  }).join("");
 }
 function factsStrip(l) {
   const bits = [ownPct(l) + " owner", entityTag(l.entity), l.pos, l.tib].filter(Boolean);
@@ -152,7 +152,6 @@ function renderDesk() {
           ${statementsBlock(l)}
         </div>
       </div>
-      ${factsStrip(l)}
       ${filesStrip(l)}
       ${activityBlock(l)}
     </div>`;

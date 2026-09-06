@@ -39,11 +39,15 @@ function renderModal() {
   if (!m) { ov.className = "overlay"; ov.innerHTML = ""; return; }
   ov.className = "overlay open";
   if (m.type === "compose") {
+    const extraOpen = !!(m.ccOpen || m.cc || m.bcc);
+    m.ccOpen = extraOpen;
     ov.innerHTML = `<div class="modal wide">
       <div class="row-between"><h2 style="font-size:16px">New message</h2><button class="icon-btn" data-act="close">${ico("x")}</button></div>
-      <div class="compose-row"><label>To</label><input id="cTo" value="${esc(m.to)}" /></div>
-      <div class="compose-row"><label>Cc</label><input id="cCc" value="${esc(m.cc)}" /></div>
-      <div class="compose-row"><label>Bcc</label><input id="cBcc" value="${esc(m.bcc)}" /></div>
+      <div class="compose-row"><label>To</label><div class="compose-to"><input id="cTo" value="${esc(m.to)}" /><button type="button" class="cc-toggle" data-act="cc-open">${extraOpen ? "Hide" : "Cc Bcc"}</button></div></div>
+      <div class="compose-extra ${extraOpen ? "open" : ""}" id="composeExtra">
+        <div class="compose-row"><label>Cc</label><input id="cCc" value="${esc(m.cc)}" /></div>
+        <div class="compose-row"><label>Bcc</label><input id="cBcc" value="${esc(m.bcc)}" /></div>
+      </div>
       <div class="compose-row"><label>Subject</label><input id="cSub" value="${esc(m.subject)}" placeholder="Subject" /></div>
       <div class="tb">
         <button data-act="fmt" data-cmd="bold"><b>B</b></button>

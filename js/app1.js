@@ -64,8 +64,11 @@ function qactPhone(n, who, sms, wa) {
 function applyWidths() {
   const r = storeGet(LS.rail);
   const d = storeGet(LS.dock);
-  document.documentElement.style.setProperty("--rail-w", (r ? +r : 320) + "px");
-  document.documentElement.style.setProperty("--dock-w", (d ? +d : 400) + "px");
+  if (window.setPaneWidths) window.setPaneWidths(r ? +r : 320, d ? +d : 400);
+  else {
+    document.documentElement.style.setProperty("--rail-w", (r ? +r : 320) + "px");
+    document.documentElement.style.setProperty("--dock-w", (d ? +d : 400) + "px");
+  }
 }
 function sizeApp() {
   const vv = window.visualViewport;
@@ -98,10 +101,16 @@ function placePad() {
 
 function renderRail() {
   const list = filtered();
+  const qEl = $("railQ");
+  const keep = qEl && document.activeElement === qEl ? qEl.selectionStart : null;
+  const qVal = state.query || "";
   $("rail").innerHTML = `
     <div class="rail-head">
       <h2>Leads <span class="dim">${list.length}</span></h2>
-      <button class="btn" style="margin-left:auto;height:28px;padding:0 10px" data-act="toast" data-msg="New lead is read-only in this desk.">${ico("plus",14)} New</button>
+      <div class="rail-search">
+        <button type="button" class="icon-btn" data-act="rail-search" title="Search leads" aria-label="Search leads">${ico("search",16)}</button>
+      </div>
+      ${state.railSearchOpen ? `<div class="rail-drop" id="railDrop"><input id="railQ" type="search" placeholder="Search leads…" value="${esc(qVal)}" autocomplete="off" /></div>` : ""}
     </div>
     <div class="filters">
       ${[["all","All"],["mine","Mine"],["star","Starred"],["today","Due today"]].map(([k,l]) =>
@@ -122,4 +131,10 @@ function renderRail() {
           </span>
         </button>`).join("") || `<div class="empty">No leads match.</div>`}
     </div>`;
+  const nq = $("railQ");
+  if (nq && (keep != null || state.railSearchOpen)) {
+    if (keep != null) { nq.focus(); nq.setSelectionRange(keep, keep); }
+  }
+  const top = $("q");
+  if (top && top !== document.activeElement) top.value = qVal;
 }

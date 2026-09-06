@@ -1,3 +1,6 @@
+function bubbleCls(m) {
+  return (m.dir === "out" ? "out" : "in") + (m.ch === "wa" ? " wa" : "");
+}
 function renderComms(l) {
   const tab = state.commsTab;
   const n = state.threadN || l.mobiles[0].n;
@@ -12,14 +15,14 @@ function renderComms(l) {
       </div>
       <div class="thread-who">${esc(who)} · ${esc(n)}</div>
       <div class="thread">${msgs.map(m => `
-        <div class="bubble ${m.dir==="out"?"out":"in"} ${m.ch==="wa"?"wa":""}">${esc(m.txt)}<div class="t">${esc(m.t)}</div></div>`).join("") || `<div class="empty">No ${state.threadCh==="wa"?"WhatsApp":"SMS"} on this number.</div>`}</div>
+        <div class="bubble ${bubbleCls(m)}">${esc(m.txt)}<div class="t">${esc(m.t)}</div></div>`).join("") || `<div class="empty">No ${state.threadCh==="wa"?"WhatsApp":"SMS"} on this number.</div>`}</div>
       <div class="composer">
         <textarea id="smsBox" placeholder="Message ${esc(n)}…"></textarea>
         <button class="btn primary" data-act="send-sms">${ico("send",14)}</button>
       </div>`;
   }
   if (tab === "all") {
-    return `<div class="thread">${l.sms.slice(-4).map(m => `<div class="bubble ${m.dir==="out"?"out":"in"} ${m.ch==="wa"?"wa":""}">${esc(m.txt)}<div class="t">${esc(m.t)}</div></div>`).join("")}
+    return `<div class="thread">${l.sms.slice(-4).map(m => `<div class="bubble ${bubbleCls(m)}">${esc(m.txt)}<div class="t">${esc(m.t)}</div></div>`).join("")}
       ${l.calls.slice(0,2).map(c => `<div class="bubble in">${c.dir==="in"?"Inbound":"Outbound"} call · ${esc(c.dur)}<div class="t">${esc(c.when)}</div></div>`).join("")}
       ${l.mails.slice(0,1).map(m => `<div class="bubble in">${esc(m.sub)}<div class="t">${esc(m.when)}</div></div>`).join("")}
       </div>`;

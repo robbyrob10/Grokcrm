@@ -16,12 +16,32 @@ document.addEventListener("click", (e) => {
     if (state.keypadOpen && !e.target.closest("#padPop") && !e.target.closest("[data-act='toggle-pad']")) {
       state.keypadOpen = false; placePad();
     }
+    if (state.railSearchOpen && !e.target.closest("#railDrop") && !e.target.closest("[data-act='rail-search']")) {
+      state.railSearchOpen = false; renderRail();
+    }
     return;
   }
   const act = b.dataset.act;
   const l = lead();
   if (act === "select") { state.selected = b.dataset.id; state.keypadOpen = false; state.threadN = ""; state.threadCh = "sms"; state.actOpen = false; renderAll(); return; }
   if (act === "filter") { state.filter = b.dataset.k; renderRail(); return; }
+  if (act === "rail-search") {
+    state.railSearchOpen = !state.railSearchOpen;
+    renderRail();
+    if (state.railSearchOpen) setTimeout(() => $("railQ")?.focus(), 20);
+    return;
+  }
+  if (act === "cc-open") {
+    if (state.modal?.type === "compose") {
+      state.modal.ccOpen = !state.modal.ccOpen;
+      const extra = $("composeExtra");
+      const btn = b;
+      if (extra) extra.classList.toggle("open", state.modal.ccOpen);
+      if (btn) btn.textContent = state.modal.ccOpen ? "Hide" : "Cc Bcc";
+      if (state.modal.ccOpen) setTimeout(() => $("cCc")?.focus(), 20);
+    }
+    return;
+  }
   if (act === "comms-tab") { state.commsTab = b.dataset.k; renderDock(); return; }
   if (act === "thread-n") { state.threadN = b.dataset.n; state.commsTab = "msg"; renderDock(); return; }
   if (act === "thread-ch") { state.threadCh = b.dataset.k; state.commsTab = "msg"; renderDock(); return; }
@@ -132,6 +152,14 @@ document.addEventListener("click", (e) => {
 
 $("overlay").addEventListener("click", (e) => { if (e.target.id === "overlay") { state.modal = null; renderModal(); }});
 $("q").addEventListener("input", (e) => { state.query = e.target.value; renderRail(); });
+document.addEventListener("input", (e) => {
+  if (e.target && e.target.id === "railQ") {
+    state.query = e.target.value;
+    const top = $("q");
+    if (top) top.value = state.query;
+    renderRail();
+  }
+});
 document.addEventListener("keydown", (e) => {
   if (e.key === "/" && !/INPUT|TEXTAREA/.test(document.activeElement.tagName) && document.activeElement.isContentEditable !== true) {
     e.preventDefault(); $("q").focus();
@@ -142,7 +170,10 @@ document.addEventListener("keydown", (e) => {
     if (e.key === "+" || e.key === "=") { e.preventDefault(); state.fileZoom = Math.min(2, +(state.fileZoom + 0.1).toFixed(1)); renderModal(); return; }
     if (e.key === "-" || e.key === "_") { e.preventDefault(); state.fileZoom = Math.max(0.8, +(state.fileZoom - 0.1).toFixed(1)); renderModal(); return; }
   }
-  if (e.key === "Escape") { state.modal = null; state.keypadOpen = false; renderAll(); }
+  if (e.key === "Escape") {
+    if (state.railSearchOpen) { state.railSearchOpen = false; renderRail(); return; }
+    state.modal = null; state.keypadOpen = false; renderAll();
+  }
 });
 window.addEventListener("resize", () => { sizeApp(); placePad(); });
 if (window.visualViewport) window.visualViewport.addEventListener("resize", () => { sizeApp(); placePad(); });

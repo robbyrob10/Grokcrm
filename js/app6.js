@@ -31,8 +31,8 @@
   document.addEventListener("dblclick", (e) => {
     const h = e.target.closest(".handle");
     if (!h) return;
-    if (h.dataset.side === "rail") { document.documentElement.style.setProperty("--rail-w", "400px"); storeSet(LS.rail, 400); }
-    else { document.documentElement.style.setProperty("--dock-w", "500px"); storeSet(LS.dock, 500); }
+    if (h.dataset.side === "rail") { document.documentElement.style.setProperty("--rail-w", "320px"); storeSet(LS.rail, 320); }
+    else { document.documentElement.style.setProperty("--dock-w", "400px"); storeSet(LS.dock, 400); }
     placePad();
   });
 })();

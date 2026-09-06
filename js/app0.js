@@ -78,7 +78,9 @@ function kv(k, v, extra) {
 }
 function pair(a, b) {
   if (!a && !b) return "";
-  return `<div class="pair">${a || "<div></div>"}${b || "<div></div>"}</div>`;
+  if (!b) return `<div class="pair one">${a}</div>`;
+  if (!a) return `<div class="pair one">${b}</div>`;
+  return `<div class="pair">${a}${b}</div>`;
 }
 function initials(n) {
   return displayName(n).split(/\s+/).slice(0,2).map(p => p[0]).join("").toUpperCase();

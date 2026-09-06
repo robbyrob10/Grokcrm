@@ -56,8 +56,8 @@ function qactPhone(n, who, sms, wa) {
 function applyWidths() {
   const r = storeGet(LS.rail);
   const d = storeGet(LS.dock);
-  document.documentElement.style.setProperty("--rail-w", (r ? +r : 400) + "px");
-  document.documentElement.style.setProperty("--dock-w", (d ? +d : 500) + "px");
+  document.documentElement.style.setProperty("--rail-w", (r ? +r : 320) + "px");
+  document.documentElement.style.setProperty("--dock-w", (d ? +d : 400) + "px");
 }
 function placePad() {
   const pop = $("padPop");

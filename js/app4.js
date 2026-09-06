@@ -2,24 +2,19 @@ function lightboxShell(letterHtml, spec) {
   const z = state.fileZoom || fitLetterZoom();
   const pages = spec.pages || 1;
   const page = spec.page || 0;
-  const ticks = pages > 1
-    ? `<div class="lb-ticks">${Array.from({length: pages}, (_, i) =>
-        `<button type="button" class="${i === page ? "on" : ""}" data-act="page-go" data-p="${i}" title="Page ${i + 1}"></button>`).join("")}</div>`
-    : "";
   return `
-    <button type="button" class="lb-x" data-act="close" title="Close">${ico("x",18)}</button>
     <div class="lb-cluster">
-      <button type="button" class="lb-arrow left" data-act="file-prev" title="Previous">${ico("chevL",22)}</button>
+      <button type="button" class="lb-arrow left" data-act="file-prev" title="Previous page">${ico("chevL",14)}</button>
       <div class="lb-page">
         <div class="letter-wrap" style="width:${816 * z}px;height:${1056 * z}px">
           <div class="letter" style="transform:scale(${z})">${letterHtml}</div>
         </div>
-        ${ticks}
       </div>
-      <button type="button" class="lb-arrow right" data-act="file-next" title="Next">${ico("chevR",22)}</button>
+      <button type="button" class="lb-arrow right" data-act="file-next" title="Next page">${ico("chevR",14)}</button>
+      <div class="lb-pg">${page + 1} / ${pages}</div>
       <div class="lb-zoom">
-        <button type="button" data-act="file-zoom" data-d="-1" title="Zoom out">${ico("minus",14)}</button>
-        <button type="button" data-act="file-zoom" data-d="1" title="Zoom in">${ico("plus",14)}</button>
+        <button type="button" data-act="file-zoom" data-d="-1" title="Zoom out">${ico("minus",12)}</button>
+        <button type="button" data-act="file-zoom" data-d="1" title="Zoom in">${ico("plus",12)}</button>
       </div>
     </div>`;
 }
@@ -32,7 +27,6 @@ function fileKind(l, i) {
   if (si >= 0) return {kind:"stmt", ai:0, si, pages: a.stmts[si].pages || 6, page:0};
   return {kind:"app", pages:1, page:0};
 }
-
 function renderModal() {
   const ov = $("overlay");
   const m = state.modal;
@@ -42,7 +36,7 @@ function renderModal() {
     const extraOpen = !!(m.ccOpen || m.cc || m.bcc);
     m.ccOpen = extraOpen;
     ov.innerHTML = `<div class="modal wide">
-      <div class="row-between"><h2 style="font-size:16px">New message</h2><button class="icon-btn" data-act="close">${ico("x")}</button></div>
+      <div class="row-between"><h2 style="font-size:16px">New message</h2></div>
       <div class="compose-row"><label>To</label><div class="compose-to"><input id="cTo" value="${esc(m.to)}" /><button type="button" class="cc-toggle" data-act="cc-open">${extraOpen ? "Hide" : "Cc Bcc"}</button></div></div>
       <div class="compose-extra ${extraOpen ? "open" : ""}" id="composeExtra">
         <div class="compose-row"><label>Cc</label><input id="cCc" value="${esc(m.cc)}" /></div>
@@ -107,7 +101,7 @@ function renderModal() {
   }
   if (m.type === "history") {
     const l = lead();
-    ov.innerHTML = `<div class="modal"><div class="row-between"><h2 style="font-size:16px">History</h2><button class="icon-btn" data-act="close">${ico("x")}</button></div>
+    ov.innerHTML = `<div class="modal"><div class="row-between"><h2 style="font-size:16px">History</h2></div>
       <h3 style="margin:16px 0 8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)">Notes</h3>
       ${l.notes.map(n => `<div style="padding:10px 0;border-bottom:1px solid var(--line)"><div class="dim">${esc(n.who)} · ${esc(n.when)}</div><p style="margin-top:6px">${esc(n.txt)}</p></div>`).join("")}
       <h3 style="margin:16px 0 8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)">Activity</h3>
@@ -117,7 +111,7 @@ function renderModal() {
   }
   if (m.type === "devices") {
     ov.innerHTML = `<div class="modal">
-      <div class="row-between"><h2 style="font-size:16px">Phones</h2><button class="icon-btn" data-act="close">${ico("x")}</button></div>
+      <div class="row-between"><h2 style="font-size:16px">Phones</h2></div>
       <p class="dim" style="margin:8px 0 4px">Green Bluetooth means a phone is on. Tap a row to call as that line.</p>
       <div class="dev-list">${DEVICES.map(d => `
         <div class="dev-item ${d.id===state.dial.device?"on-row":""}">
@@ -133,14 +127,13 @@ function renderModal() {
   }
   if (m.type === "mail-read") {
     const mail = lead().mails[m.i];
-    ov.innerHTML = `<div class="modal"><div class="row-between"><h2 style="font-size:16px">${esc(mail.sub)}</h2><button class="icon-btn" data-act="close">${ico("x")}</button></div>
+    ov.innerHTML = `<div class="modal"><div class="row-between"><h2 style="font-size:16px">${esc(mail.sub)}</h2></div>
       <div class="dim" style="margin-top:8px">${esc(mail.from)} · ${esc(mail.when)}</div>
       <p style="margin-top:16px;line-height:1.55">${esc(mail.preview)}</p>
       <button class="btn" style="margin-top:16px" data-act="compose">Reply</button>
     </div>`;
   }
 }
-
 function startCall(n, who) {
   state.modal = null;
   state.keypadOpen = false;

@@ -30,8 +30,7 @@ function monthKv(a, ai, s, si) {
   const lab = monthShort(s.m);
   return `<button type="button" class="stmt-kv" data-act="stmt" data-ai="${ai}" data-si="${si}" title="Open ${esc(lab)} statement">
     <div class="mo">${esc(lab)}</div>
-    <div class="fig"><span class="fk">Dep</span><span class="fv">${money(s.dep)}</span></div>
-    <div class="fig"><span class="fk">Bal</span><span class="fv">${money(s.end)}</span></div>
+    ${pair(kv("Dep", money(s.dep)), kv("Bal", money(s.end)))}
   </button>`;
 }
 function statementsBlock(l) {

@@ -31,8 +31,8 @@
     if (!h) return;
     side = h.dataset.side;
     startX = e.clientX;
-    startRail = readW("--rail-w", 320);
-    startDock = readW("--dock-w", 400);
+    startRail = readW("--rail-w", 480);
+    startDock = readW("--dock-w", 430);
     startW = side === "rail" ? startRail : startDock;
     h.classList.add("drag");
     e.preventDefault();
@@ -51,17 +51,17 @@
   document.addEventListener("mouseup", () => {
     if (!side) return;
     document.querySelectorAll(".handle").forEach(h => h.classList.remove("drag"));
-    storeSet(LS.rail, readW("--rail-w", 320));
-    storeSet(LS.dock, readW("--dock-w", 400));
+    storeSet(LS.rail, readW("--rail-w", 480));
+    storeSet(LS.dock, readW("--dock-w", 430));
     side = null;
   });
   document.addEventListener("dblclick", (e) => {
     const h = e.target.closest(".handle");
     if (!h) return;
-    if (h.dataset.side === "rail") window.setPaneWidths(320, readW("--dock-w", 400), "rail");
-    else window.setPaneWidths(readW("--rail-w", 320), 400, "dock");
-    storeSet(LS.rail, readW("--rail-w", 320));
-    storeSet(LS.dock, readW("--dock-w", 400));
+    if (h.dataset.side === "rail") window.setPaneWidths(480, readW("--dock-w", 430), "rail");
+    else window.setPaneWidths(readW("--rail-w", 480), 430, "dock");
+    storeSet(LS.rail, readW("--rail-w", 480));
+    storeSet(LS.dock, readW("--dock-w", 430));
     placePad();
   });
 })();

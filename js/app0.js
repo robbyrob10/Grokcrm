@@ -26,7 +26,7 @@ function accountsOf(l) {
   const raw = l.accounts || [{name: l.bank.name, acct: l.bank.acct, stmts: l.stmts || []}];
   return raw.slice(0, 1).map(a => ({...a, name: bankBrand(a.name)}));
 }
-const LS = { rail: "forge.railW", dock: "forge.dockW" };
+const LS = { rail: "forge.railW16", dock: "forge.dockW16" };
 function storeGet(k) {
   try { return localStorage.getItem(k); } catch (e) { return null; }
 }

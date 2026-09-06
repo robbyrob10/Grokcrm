@@ -64,10 +64,10 @@ function qactPhone(n, who, sms, wa) {
 function applyWidths() {
   const r = storeGet(LS.rail);
   const d = storeGet(LS.dock);
-  if (window.setPaneWidths) window.setPaneWidths(r ? +r : 320, d ? +d : 400);
+  if (window.setPaneWidths) window.setPaneWidths(r ? +r : 480, d ? +d : 430);
   else {
-    document.documentElement.style.setProperty("--rail-w", (r ? +r : 320) + "px");
-    document.documentElement.style.setProperty("--dock-w", (d ? +d : 400) + "px");
+    document.documentElement.style.setProperty("--rail-w", (r ? +r : 480) + "px");
+    document.documentElement.style.setProperty("--dock-w", (d ? +d : 430) + "px");
   }
 }
 function sizeApp() {

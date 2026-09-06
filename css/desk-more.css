@@ -14,7 +14,7 @@
 .rec-main .web:hover{color:var(--fg)}
 .money{display:flex;flex-direction:column;align-items:flex-end;gap:1px;flex-shrink:0;padding:0;border:0}
 .money .k{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-weight:600;line-height:1.2}
-.money .v,.money .v .num{font-size:20px;font-weight:600;font-family:var(--font);letter-spacing:-.03em;margin:0;line-height:1.1;color:#1A1F26}
+.money .v,.money .v .num{font-size:19px;font-weight:600;font-family:var(--font);letter-spacing:-.03em;margin:0;line-height:1.1;color:#1A1F26}
 .money .asked{display:none}
 .sheet-x{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;margin:4px 40px 0;align-items:stretch;position:relative;border:0;background:transparent}
 .quad{padding:16px 20px 18px;min-width:0;min-height:0;display:flex;flex-direction:column;position:relative;border-top:0}
@@ -30,8 +30,15 @@
 .kv .v .qacts{margin-left:2px;flex-shrink:0}
 .dline{display:none !important;height:0 !important;margin:0 !important;padding:0 !important;border:0 !important}
 .kv .v .qacts{margin-left:0;flex-shrink:0}
-.files-row{display:flex;justify-content:space-evenly;align-items:flex-end;gap:12px;margin:16px 40px 8px;padding:4px 0 8px;position:relative}
-.files-k{position:absolute;left:0;top:0;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#1A1F26;font-weight:650}
+.files-block{margin:16px 40px 8px}
+.files-k{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8B949E;font-weight:600;margin:0 0 12px}
+.files-row{display:flex;justify-content:space-between;align-items:flex-end;gap:0;width:100%;padding:0}
+.file-doc{border:0;background:transparent;padding:0;cursor:pointer;color:inherit;flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:8px}
+.file-doc .pdf-ico{display:block;flex-shrink:0}
+.file-doc .lab{font-family:var(--font);font-size:10px;font-weight:600;letter-spacing:.08em;color:#5C6770}
+.file-doc:hover .pdf-ico path[stroke]{stroke:#0E2A4A}
+.file-doc:hover .lab{color:#1A1F26}
+.stmt-months{display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;margin-top:10px;align-items:start}
 .banks{display:grid;gap:12px}
 .below{padding:8px 40px 28px}
 .email-head{display:flex;align-items:center;gap:6px;margin:14px 0 8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-weight:600}
@@ -50,14 +57,7 @@
 .toggle.on{color:var(--fg);border-color:var(--fg)}
 .sheet-x .muted{font-size:13px;padding:8px 0}
 
-.files-row{display:flex;justify-content:center;align-items:flex-end;gap:28px;margin:16px 40px 8px;padding:18px 0 8px;position:relative}
-.file-doc{border:0;background:transparent;padding:4px;cursor:pointer;color:inherit}
-.file-doc .paper{width:46px;height:56px;background:#FBF7F1;border:1px solid #D8D0C6;position:relative;display:grid;place-items:center;border-radius:1px}
-.file-doc .fold{position:absolute;top:-1px;right:-1px;width:0;height:0;border-style:solid;border-width:0 11px 11px 0;border-color:transparent #1A365D transparent transparent;pointer-events:none}
-.file-doc .lab{font-family:var(--font);font-size:10px;font-weight:600;letter-spacing:.06em;color:#1A1F26;padding-top:6px}
 .stmt-kv .v,.stmt-kv .v .num{font-size:13.5px;font-weight:500;font-family:var(--font);letter-spacing:-.01em;margin-top:1px;white-space:nowrap}
-.file-doc:hover .paper{border-color:#C5B8A8}
-.stmt-months{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 14px;margin-top:10px}
 .stmt-kv{border:0;background:transparent;text-align:left;padding:4px 0;min-width:0;cursor:pointer;color:inherit;font:inherit;display:flex;flex-direction:column;gap:3px;width:100%}
 .stmt-kv .mo{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-weight:600}
 .stmt-kv .fig{display:flex;align-items:baseline;justify-content:space-between;gap:8px}

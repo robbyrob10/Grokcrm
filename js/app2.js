@@ -14,7 +14,7 @@ function contactBlock(l) {
   if (ems.length) {
     html += `<div class="email-head">
       <span>Email</span>
-      <button type="button" class="mail-all-ico" data-act="email-all" title="Email all">${ico("mailAll",15)}</button>
+      <button type="button" class="mail-all-ico" data-act="email-all" title="Email all">${ico("mail",14)}</button>
     </div>`;
     ems.forEach(a => {
       html += `<div class="email-row">
@@ -29,20 +29,26 @@ function monthKv(a, ai, s, si) {
   if (!s) return "";
   const lab = monthShort(s.m);
   return `<button type="button" class="stmt-kv" data-act="stmt" data-ai="${ai}" data-si="${si}" title="Open ${esc(lab)} statement">
-    <div class="k">${esc(lab)}</div>
-    <div class="v">${money(s.dep)} <span class="end">${money(s.end)}</span></div>
+    <div class="mo">${esc(lab)}</div>
+    <div class="fig"><span class="fk">Dep</span><span class="fv">${money(s.dep)}</span></div>
+    <div class="fig"><span class="fk">Bal</span><span class="fv">${money(s.end)}</span></div>
   </button>`;
 }
 function statementsBlock(l) {
   const accts = accountsOf(l).slice(0, 1);
   if (!accts.length) return `<div class="muted">No statements</div>`;
   return `<div class="banks">${accts.map((a, ai) => {
-    const months = (a.stmts || []).slice(0, 2);
+    const months = (a.stmts || []).slice(0, 3);
     return `<div class="bank-col">
       ${pair(kv("Bank", esc(a.name)), kv("Account", esc(a.acct)))}
-      ${pair(monthKv(a, ai, months[0], 0), monthKv(a, ai, months[1], 1))}
+      <div class="stmt-months">${months.map((s, si) => monthKv(a, ai, s, si)).join("")}</div>
     </div>`;
   }).join("")}</div>`;
+}
+function factsStrip(l) {
+  const bits = [ownPct(l) + " owner", entityTag(l.entity), l.pos, l.tib].filter(Boolean);
+  if (!bits.length) return "";
+  return `<div class="facts-strip">${bits.map(b => `<span>${esc(b)}</span>`).join("")}</div>`;
 }
 function filesStrip(l) {
   const rank = {APP:0,JAN:1,FEB:2,MAR:3,APR:4,MAY:5,JUN:6,JUL:7,AUG:8,SEP:9,OCT:10,NOV:11,DEC:12,MTD:13};
@@ -134,6 +140,7 @@ function renderDesk() {
           ${statementsBlock(l)}
         </div>
       </div>
+      ${factsStrip(l)}
       ${filesStrip(l)}
       ${activityBlock(l)}
     </div>`;

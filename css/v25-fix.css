@@ -1,0 +1,20 @@
+/* phones: full number, icons wrap under so they never cross the divider */
+.sheet-x .kv .v{flex-wrap:wrap;overflow:visible;max-width:100%}
+.sheet-x .kv .vt{overflow:visible;text-overflow:clip;white-space:nowrap;min-width:0}
+.sheet-x .kv .v .qacts{flex:1 0 100%;margin-left:0;margin-top:4px}
+.sheet-x > .quad:nth-of-type(1),
+.sheet-x > .quad:nth-of-type(3){overflow:visible;padding-right:28px}
+.quad.r2 .pair{gap:8px 14px}
+
+/* approved only */
+.money .v,.money .v .num{font-size:16.5px}
+
+/* statement viewer */
+.lb-cluster{grid-template-columns:28px auto 28px;grid-template-rows:auto;gap:4px;position:relative}
+.lb-page{grid-column:2;grid-row:1;position:relative}
+.lb-arrow{width:28px;height:28px;box-shadow:0 2px 10px rgba(0,0,0,.16)}
+.lb-arrow svg{width:14px;height:14px}
+.lb-arrow.left{grid-column:1;grid-row:1}
+.lb-arrow.right{grid-column:3;grid-row:1}
+.lb-zoom{grid-column:2;grid-row:1;justify-self:end;align-self:end;display:flex;flex-direction:column;gap:6px;margin:0 8px 10px 0;z-index:43;position:relative}
+.lb-zoom button{width:28px;height:28px}

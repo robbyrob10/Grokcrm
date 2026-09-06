@@ -38,7 +38,7 @@
 .file-doc .lab{font-family:var(--font);font-size:10px;font-weight:600;letter-spacing:.08em;color:#5C6770}
 .file-doc:hover .pdf-ico path[stroke]{stroke:#0E2A4A}
 .file-doc:hover .lab{color:#1A1F26}
-.stmt-months{display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;margin-top:10px;align-items:start}
+.stmt-months{display:grid;grid-template-columns:1fr;gap:12px;margin-top:10px;align-items:start}
 .stmt-kv{border:0;background:transparent;text-align:left;padding:0;min-width:0;cursor:pointer;color:inherit;font:inherit;display:flex;flex-direction:column;gap:2px;width:100%}
 .stmt-kv .mo{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-weight:600;margin:0 0 4px}
 .stmt-kv .pair{padding:0;gap:10px 24px}

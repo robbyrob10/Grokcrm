@@ -38,7 +38,7 @@
       </div>
       <a class="btn" href="index.html?lead=${esc(l.id)}">Lead</a>`;
     $("thread").innerHTML = (l.sms || []).map(m =>
-      `<div class="bubble ${m.dir}${m.ch === "wa" ? " wa" : ""}">${esc(m.txt)}<div style="font-size:11px;opacity:.65;margin-top:4px">${esc(m.t)}${m.ch === "wa" ? " · WhatsApp" : ""}</div></div>`
+      `<div class="bubble ${m.dir}${m.ch === "wa" ? " wa" : ""}">${esc(m.txt)}<div class="t">${esc(m.t)}</div></div>`
     ).join("") || `<div class="empty">No messages yet.</div>`;
     $("thread").scrollTop = $("thread").scrollHeight;
   }

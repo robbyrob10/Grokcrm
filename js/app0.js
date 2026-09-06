@@ -53,8 +53,8 @@ const state = {
 let tick = null;
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&"+"amp;","<":"&"+"lt;",">":"&"+"gt;",'"':"&"+"quot;","'":"&#39;"}[c]));
-const money = (n) => n == null ? "—" : `<span class="num">$${Math.round(n).toLocaleString("en-US")}</span>`;
-const num = (s) => `<span class="num">${s}</span>`;
+const money = (n) => n == null ? "—" : "$" + Math.round(n).toLocaleString("en-US");
+const num = (s) => s;
 const lead = () => LEADS.find(l => l.id === state.selected) || LEADS[0];
 const device = () => DEVICES.find(d => d.id === state.dial.device) || DEVICES[0];
 function displayName(n) { return String(n).replace(/^Dr\.\s+/i, ""); }

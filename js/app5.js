@@ -96,10 +96,10 @@ document.addEventListener("click", (e) => {
     state.modal = null; renderAll(); toast("Sent"); return;
   }
   if (act === "open-mail") { state.modal = {type:"mail-read", i:+b.dataset.i}; renderModal(); return; }
-  if (act === "file") { state.modal = {type:"file", i:+b.dataset.i, page:0}; state.fileZoom = 1.2; renderModal(); return; }
+  if (act === "file") { state.modal = {type:"file", i:+b.dataset.i, page:0}; state.fileZoom = fitLetterZoom(); renderModal(); return; }
   if (act === "stmt") {
     state.modal = {type:"stmt", ai:+b.dataset.ai, si:+b.dataset.si, page:0};
-    state.fileZoom = 1.2;
+    state.fileZoom = fitLetterZoom();
     renderModal(); return;
   }
   if (act === "file-prev" || act === "file-next") {

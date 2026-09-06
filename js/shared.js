@@ -1,6 +1,6 @@
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&"+"amp;","<":"&"+"lt;",">":"&"+"gt;",'"':"&"+"quot;","'":"&#39;"}[c]));
-const money = (n) => n == null ? "—" : `<span class="num">$${Math.round(n).toLocaleString("en-US")}</span>`;
+const money = (n) => n == null ? "—" : "$" + Math.round(n).toLocaleString("en-US");
 function bankBrand(name) {
   const n = String(name || "").toLowerCase();
   if (n.includes("wells")) return "Wells Fargo";
@@ -157,16 +157,13 @@ function unreadOf(l) {
 
 (function sizeApp() {
   function apply() {
-    const w = window.innerWidth || 1640;
-    const scale = w < 1640 ? Math.max(0.45, w / 1640) : 1;
+    const vv = window.visualViewport;
+    const w = (vv && vv.width) || window.innerWidth || 1640;
+    const h = (vv && vv.height) || window.innerHeight || 900;
+    const scale = Math.max(0.35, w / 1640);
     document.documentElement.style.setProperty("--app-scale", String(scale));
-    const screenH = window.screen && window.screen.height ? window.screen.height : 900;
-    let h = window.innerHeight || 900;
-    const inflated = h > screenH * 1.35;
-    if (inflated) h = Math.max(760, screenH);
-    else if (scale < 1) h = Math.round(h / scale);
-    h = Math.max(760, Math.round(h));
-    document.documentElement.style.setProperty("--app-h", h + "px");
+    const appH = Math.max(700, Math.round(h / scale));
+    document.documentElement.style.setProperty("--app-h", appH + "px");
   }
   apply();
   window.addEventListener("resize", apply);

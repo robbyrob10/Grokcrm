@@ -6,8 +6,8 @@ function contactBlock(l) {
   for (let i = 0; i < n; i++) {
     const m = mobs[i];
     const d = lands[i];
-    const left = m ? kv(m.l || "Mobile", num(esc(m.n)), qactPhone(m.n, l.contact, true, true)) : "";
-    const right = d ? kv(d.l || "Landline", num(esc(d.n)), qactPhone(d.n, l.contact, false, false)) : "";
+    const left = m ? kv(m.l || "Mobile", esc(m.n), qactPhone(m.n, l.contact, true, true)) : "";
+    const right = d ? kv(d.l || "Landline", esc(d.n), qactPhone(d.n, l.contact, false, false)) : "";
     html += pair(left, right);
   }
   const ems = l.emails || [];
@@ -39,7 +39,7 @@ function statementsBlock(l) {
   return `<div class="banks">${accts.map((a, ai) => {
     const months = (a.stmts || []).slice(0, 2);
     return `<div class="bank-col">
-      ${pair(kv("Bank", esc(a.name)), kv("Account", num(esc(a.acct))))}
+      ${pair(kv("Bank", esc(a.name)), kv("Account", esc(a.acct)))}
       ${pair(monthKv(a, ai, months[0], 0), monthKv(a, ai, months[1], 1))}
     </div>`;
   }).join("")}</div>`;
@@ -50,7 +50,7 @@ function filesStrip(l) {
     .filter(x => x.lab)
     .sort((a, b) => (rank[a.lab] ?? 50) - (rank[b.lab] ?? 50));
   if (!items.length) return "";
-  return `<div class="files-row">${items.map(x =>
+  return `<div class="files-row"><span class="files-k">Files</span>${items.map(x =>
     `<button type="button" class="file-doc" data-act="file" data-i="${x.i}" title="${esc(x.lab)}">
       <span class="paper"><i class="fold"></i><span class="lab">${esc(x.lab)}</span></span>
     </button>`
@@ -110,26 +110,18 @@ function renderDesk() {
           <div class="rec-title"><h1>${esc(l.company)}</h1></div>
           ${site}
         </div>
-        <div class="money">
-          <div><div class="k">Approved</div><div class="v">${money(appr)}</div></div>
-        </div>
-        <i class="dline h head-rule"></i>
+        <div class="money"><span class="k">Approved</span><span class="v">${money(appr)}</span></div>
       </div>
       <div class="sheet-x">
-        <i class="dline v v-top"></i>
-        <i class="dline v v-bot"></i>
-        <i class="dline h mid-l"></i>
-        <i class="dline h mid-r"></i>
-        <i class="dline h sheet-bot"></i>
         <div class="quad">
           <h3>Owner</h3>
           ${pair(kv("Name", esc(displayName(l.contact))), kv("Title", esc(l.title)))}
-          ${pair(kv("SSN", num(esc(l.ssn))), kv("DOB", esc(l.dob)))}
+          ${pair(kv("SSN", esc(l.ssn)), kv("DOB", esc(l.dob)))}
           ${pair(kv("Home", esc(home)))}
         </div>
         <div class="quad">
           <h3>Business</h3>
-          ${pair(kv("EIN", num(esc(l.ein))), kv("Industry", esc(l.industry)))}
+          ${pair(kv("EIN", esc(l.ein)), kv("Industry", esc(l.industry)))}
           ${pair(kv("Time in business", esc(l.tib)), kv("Ownership", esc(ownPct(l))))}
           ${pair(kv("Office", esc(l.address)))}
         </div>

@@ -68,16 +68,20 @@ function applyWidths() {
   document.documentElement.style.setProperty("--dock-w", (d ? +d : 400) + "px");
 }
 function sizeApp() {
-  const w = window.innerWidth || 1640;
-  const scale = w < 1640 ? Math.max(0.45, w / 1640) : 1;
+  const vv = window.visualViewport;
+  const w = (vv && vv.width) || window.innerWidth || 1640;
+  const h = (vv && vv.height) || window.innerHeight || 900;
+  const scale = Math.max(0.35, w / 1640);
   document.documentElement.style.setProperty("--app-scale", String(scale));
-  const screenH = window.screen && window.screen.height ? window.screen.height : 900;
-  let h = window.innerHeight || 900;
-  const inflated = h > screenH * 1.35;
-  if (inflated) h = Math.max(760, screenH);
-  else if (scale < 1) h = Math.round(h / scale);
-  h = Math.max(760, Math.round(h));
-  document.documentElement.style.setProperty("--app-h", h + "px");
+  const appH = Math.max(700, Math.round(h / scale));
+  document.documentElement.style.setProperty("--app-h", appH + "px");
+}
+function fitLetterZoom() {
+  const vv = window.visualViewport;
+  const w = (vv && vv.width) || window.innerWidth || 1200;
+  const h = (vv && vv.height) || window.innerHeight || 800;
+  const z = Math.min((w - 120) / 816, (h - 72) / 1056);
+  return Math.max(0.4, Math.min(1.35, +z.toFixed(3)));
 }
 function placePad() {
   const pop = $("padPop");

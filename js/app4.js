@@ -1,5 +1,5 @@
 function lightboxShell(letterHtml, spec) {
-  const z = state.fileZoom || 1.2;
+  const z = state.fileZoom || fitLetterZoom();
   const pages = spec.pages || 1;
   const page = spec.page || 0;
   const ticks = pages > 1
@@ -8,16 +8,18 @@ function lightboxShell(letterHtml, spec) {
     : "";
   return `
     <button type="button" class="lb-x" data-act="close" title="Close">${ico("x",18)}</button>
-    <button type="button" class="lb-arrow left" data-act="file-prev" title="Previous">${ico("chevL",22)}</button>
-    <button type="button" class="lb-arrow right" data-act="file-next" title="Next">${ico("chevR",22)}</button>
-    <div class="lb-zoom">
-      <button type="button" data-act="file-zoom" data-d="-1" title="Zoom out">${ico("minus",14)}</button>
-      <button type="button" data-act="file-zoom" data-d="1" title="Zoom in">${ico("plus",14)}</button>
-    </div>
-    ${ticks}
-    <div class="lb-stage">
-      <div class="letter-wrap" style="width:${816 * z}px;height:${1056 * z}px">
-        <div class="letter" style="transform:scale(${z})">${letterHtml}</div>
+    <div class="lb-cluster">
+      <button type="button" class="lb-arrow left" data-act="file-prev" title="Previous">${ico("chevL",22)}</button>
+      <div class="lb-page">
+        <div class="letter-wrap" style="width:${816 * z}px;height:${1056 * z}px">
+          <div class="letter" style="transform:scale(${z})">${letterHtml}</div>
+        </div>
+        ${ticks}
+      </div>
+      <button type="button" class="lb-arrow right" data-act="file-next" title="Next">${ico("chevR",22)}</button>
+      <div class="lb-zoom">
+        <button type="button" data-act="file-zoom" data-d="-1" title="Zoom out">${ico("minus",14)}</button>
+        <button type="button" data-act="file-zoom" data-d="1" title="Zoom in">${ico("plus",14)}</button>
       </div>
     </div>`;
 }

@@ -1,12 +1,18 @@
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&"+"amp;","<":"&"+"lt;",">":"&"+"gt;",'"':"&"+"quot;","'":"&#39;"}[c]));
-const money = (n) => n == null ? "—" : "$" + Math.round(n).toLocaleString("en-US");
+const money = (n) => n == null ? "\u2014" : "$" + Math.round(n).toLocaleString("en-US");
 const params = () => new URLSearchParams(location.search);
 
 function displayName(n) { return String(n).replace(/^Dr\.\s+/i, ""); }
 function hue(str) {
-  let h = 0; for (const c of str) h = (h * 33 + c.charCodeAt(0)) % 360;
-  return `hsl(${h} 22% 38%)`;
+  const pal = {ns:"#2B6E72",hl:"#9A5628",bd:"#8A7020",ro:"#4E6230",lu:"#2E6A48",mw:"#7A3E50",kp:"#3A5480",ap:"#8A3A32"};
+  const s = String(str || "");
+  if (typeof LEADS !== "undefined") {
+    const l = LEADS.find(x => x.id===s || x.company===s || x.contact===s || displayName(x.contact)===s);
+    if (l && pal[l.id]) return pal[l.id];
+  }
+  let h = 0; for (const c of s) h = (h * 33 + c.charCodeAt(0)) >>> 0;
+  return "hsl(" + ((h * 137) % 360) + " 40% 36%)";
 }
 function initials(n) {
   return displayName(n).split(/\s+/).slice(0, 2).map(p => p[0]).join("").toUpperCase();

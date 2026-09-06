@@ -1,0 +1,10 @@
+.header{background:#F7F6F3}
+.rail-head,.dock-head,.rec-head{height:44px;padding:0 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;flex-shrink:0;background:#F7F6F3}
+.rail-head h2,.dock-head h2,.rec-head h2{font-size:13.5px;font-weight:600;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0}
+.lead-facts{padding:14px 40px 8px}
+.lead-facts .who{font-size:13.5px;color:var(--muted);font-weight:400}
+.lead-facts .meta{font-size:13px;font-weight:400;color:var(--muted);margin-top:6px;line-height:1.5}
+.line{display:flex;align-items:center;gap:12px;min-height:32px;padding:7px 0}
+.line .val{flex:1;min-width:0}
+.line .lab{display:none}
+.cgroup h4{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8B949E;font-weight:600;margin:0 0 8px}

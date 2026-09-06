@@ -6,8 +6,19 @@
 
   function vp() {
     const vv = window.visualViewport;
-    if (vv) return { w: vv.width, h: vv.height, ox: vv.offsetLeft || 0, oy: vv.offsetTop || 0 };
-    return { w: window.innerWidth || CW, h: window.innerHeight || CH, ox: 0, oy: 0 };
+    const w = Math.max(
+      (vv && vv.width) || 0,
+      window.innerWidth || 0,
+      document.documentElement.clientWidth || 0,
+      320
+    );
+    const h = Math.max(
+      (vv && vv.height) || 0,
+      window.innerHeight || 0,
+      document.documentElement.clientHeight || 0,
+      480
+    );
+    return { w, h, ox: (vv && vv.offsetLeft) || 0, oy: (vv && vv.offsetTop) || 0 };
   }
   function fitScale() {
     const { w, h } = vp();

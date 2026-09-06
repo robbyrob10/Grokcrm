@@ -50,39 +50,82 @@ function filesStrip(l) {
     .filter(x => x.lab)
     .sort((a, b) => (rank[a.lab] ?? 50) - (rank[b.lab] ?? 50));
   if (!items.length) return "";
-  return `<div class="file-strip" style="grid-template-columns:repeat(${items.length},1fr)">${items.map(x =>
-    `<button type="button" class="file-chip" data-act="file" data-i="${x.i}">${esc(x.lab)}</button>`
+  return `<div class="files-row">${items.map(x =>
+    `<button type="button" class="file-doc" data-act="file" data-i="${x.i}" title="${esc(x.lab)}">
+      <span class="paper"><i class="fold"></i><span class="lab">${esc(x.lab)}</span></span>
+    </button>`
   ).join("")}</div>`;
+}
+function actKind(what) {
+  const w = String(what || "").toLowerCase();
+  if (/call/.test(w)) return {ico:"phone", verb:"Call"};
+  if (/email|mail/.test(w)) return {ico:"mail", verb:"Email"};
+  if (/whatsapp|\bwa\b/.test(w)) return {ico:"wa", verb:"Chat"};
+  if (/sms|text/.test(w)) return {ico:"sms", verb:"SMS"};
+  return {ico:"doc", verb:"Note"};
+}
+function actShort(what) {
+  let s = String(what || "");
+  s = s.replace(/^(SMS|Email|Call|WhatsApp|Mail)(\s+sent)?[^·]*·\s*/i, "");
+  s = s.replace(/^to\s+[^·]+·\s*/i, "");
+  const parts = s.split("·").map(x => x.trim()).filter(Boolean);
+  if (parts.length > 2) s = parts.slice(0, 2).join(" · ");
+  if (s.length > 48) s = s.slice(0, 46) + "…";
+  return s;
+}
+function activityBlock(l) {
+  const items = l.activity || [];
+  const shown = state.actOpen ? items : items.slice(0, 2);
+  const more = items.length - 2;
+  return `<div class="below">
+    <div class="pitch-block">
+      <div class="k">Why this deal</div>
+      <p class="pitch">${esc(l.pitch)}</p>
+    </div>
+    <div class="act-block">
+      <div class="k">Activity</div>
+      ${shown.map(a => {
+        const k = actKind(a.what);
+        return `<div class="act-row">
+          <span class="act-ico">${ico(k.ico, 14)}</span>
+          <span class="act-verb">${k.verb}</span>
+          <span class="act-txt">${esc(actShort(a.what))}</span>
+          <span class="act-when">${esc(a.when)}</span>
+        </div>`;
+      }).join("")}
+      ${more > 0 ? `<button type="button" class="act-more" data-act="act-toggle">${state.actOpen ? "▴ close" : "▾ " + more}</button>` : ""}
+    </div>
+  </div>`;
 }
 function renderDesk() {
   const l = lead();
-  const tag = entityTag(l.entity);
-  const site = l.website ? ` · <a href="https://${esc(l.website)}" target="_blank" rel="noopener">${esc(l.website)}</a>` : "";
+  const site = l.website ? `<a class="web" href="https://${esc(l.website)}" target="_blank" rel="noopener">${esc(l.website)}</a>` : "";
   const home = l.appAddress && l.appAddress !== l.address ? l.appAddress : l.address;
   const rev = roundRev(l.avg);
   const appr = rev + 150000;
   $("desk").innerHTML = `
     <div class="desk-scroll">
       <div class="rec-head">
-        <div class="rec-title"><h1>${esc(l.company)}</h1>${tag ? `<span class="ent">${esc(tag)}</span>` : ""}</div>
-        <div class="who">${esc(displayName(l.contact))}${site}</div>
-      </div>
-      <div class="money">
-        <div><div class="k">Revenue</div><div class="v">${money(rev)}</div></div>
-        <div><div class="k">Approval</div><div class="v">${money(appr)}</div></div>
+        <div class="rec-main">
+          <div class="rec-title"><h1>${esc(l.company)}</h1>${site}</div>
+        </div>
+        <div class="money">
+          <div><div class="k">Revenue</div><div class="v">${money(rev)}</div></div>
+          <div><div class="k">Approval</div><div class="v">${money(appr)}</div></div>
+        </div>
       </div>
       <div class="sheet-x">
         <div class="quad">
           <h3>Owner</h3>
           ${pair(kv("Name", esc(displayName(l.contact))), kv("Title", esc(l.title)))}
           ${pair(kv("SSN", esc(l.ssn)), kv("DOB", esc(l.dob)))}
-          ${pair(kv("Home", esc(home)), `<div class="kv"></div>`)}
+          ${pair(kv("Home", esc(home)))}
         </div>
         <div class="quad">
           <h3>Business</h3>
           ${pair(kv("EIN", esc(l.ein)), kv("Industry", esc(l.industry)))}
-          ${pair(kv("Time in business", esc(l.tib)), kv("Entity", esc(tag || l.entity)))}
-          ${pair(kv("Office", esc(l.address)), kv("Ownership", esc(ownPct(l))))}
+          ${pair(kv("Time in business", esc(l.tib)), kv("Ownership", esc(ownPct(l))))}
+          ${pair(kv("Office", esc(l.address)))}
         </div>
         <div class="quad r2">
           <h3>Contact</h3>
@@ -94,14 +137,7 @@ function renderDesk() {
         </div>
       </div>
       ${filesStrip(l)}
-      <div class="below">
-        <h3 style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-weight:600;margin:8px 0 10px">Why this deal</h3>
-        <div class="pitch-box"><p class="pitch">${esc(l.pitch)}</p></div>
-        <h3 style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-weight:600;margin:16px 0 10px">Activity</h3>
-        ${l.notes.slice(0,1).map(n => `<div class="note" style="margin-bottom:10px"><div class="dim">${esc(n.who)} · ${esc(n.when)}</div><p>${esc(n.txt)}</p></div>`).join("")}
-        ${l.activity.map(a => `<div class="ev"><div class="when">${esc(a.when)}</div><div>${esc(a.what)}</div></div>`).join("")}
-        <button class="linkish" data-act="history">Full history</button>
-      </div>
+      ${activityBlock(l)}
     </div>`;
 }
 

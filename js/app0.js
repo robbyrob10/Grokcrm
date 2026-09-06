@@ -36,6 +36,7 @@ const state = {
   threadCh: "sms",
   fileZoom: 1.2,
   keypadOpen: false,
+  actOpen: false,
   fav: new Set(LEADS.filter(l => l.fav).map(l => l.id)),
   follow: Object.fromEntries(LEADS.filter(l => l.follow).map(l => [l.id, l.follow])),
   modal: null,
@@ -92,7 +93,7 @@ function bankMark(name) {
 }
 function kv(k, v, extra) {
   if (v == null || v === "") return "";
-  return `<div class="kv"><div class="k">${esc(k)}</div><div class="v">${v}${extra || ""}</div></div>`;
+  return `<div class="kv"><div class="k">${esc(k)}</div><div class="v"><span class="vt">${v}</span>${extra || ""}</div></div>`;
 }
 function pair(a, b) {
   if (!a && !b) return "";

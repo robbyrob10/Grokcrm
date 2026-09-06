@@ -20,7 +20,7 @@ document.addEventListener("click", (e) => {
   }
   const act = b.dataset.act;
   const l = lead();
-  if (act === "select") { state.selected = b.dataset.id; state.keypadOpen = false; state.threadN = ""; state.threadCh = "sms"; renderAll(); return; }
+  if (act === "select") { state.selected = b.dataset.id; state.keypadOpen = false; state.threadN = ""; state.threadCh = "sms"; state.actOpen = false; renderAll(); return; }
   if (act === "filter") { state.filter = b.dataset.k; renderRail(); return; }
   if (act === "comms-tab") { state.commsTab = b.dataset.k; renderDock(); return; }
   if (act === "thread-n") { state.threadN = b.dataset.n; state.commsTab = "msg"; renderDock(); return; }
@@ -120,6 +120,7 @@ document.addEventListener("click", (e) => {
     renderModal(); return;
   }
   if (act === "history") { state.modal = {type:"history"}; renderModal(); return; }
+  if (act === "act-toggle") { state.actOpen = !state.actOpen; renderDesk(); return; }
   if (act === "close") { state.modal = null; renderModal(); return; }
   if (act === "toast") { toast(b.dataset.msg); return; }
 });

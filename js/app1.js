@@ -61,7 +61,8 @@ function applyWidths() {
 }
 function sizeApp() {
   let h = window.innerHeight || 900;
-  h = Math.max(700, Math.round(h));
+  if (h > 1100) h = 900;
+  h = Math.max(760, Math.round(h));
   document.documentElement.style.setProperty("--app-h", h + "px");
 }
 function placePad() {

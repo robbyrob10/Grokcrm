@@ -60,10 +60,8 @@ function applyWidths() {
   document.documentElement.style.setProperty("--dock-w", (d ? +d : 400) + "px");
 }
 function sizeApp() {
-  const vv = window.visualViewport;
-  let h = (vv && vv.height) ? vv.height : window.innerHeight;
-  if (h > 1100) h = 900;
-  h = Math.max(760, Math.min(1100, Math.round(h)));
+  let h = window.innerHeight || 900;
+  h = Math.max(700, Math.round(h));
   document.documentElement.style.setProperty("--app-h", h + "px");
 }
 function placePad() {

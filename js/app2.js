@@ -115,7 +115,8 @@ function renderDock() {
       ${[["all","All"],["msg","Messages"],["calls","Call log"],["people","Contacts"],["mail","Email"]].map(([k,lab]) =>
         `<button class="${state.commsTab===k?"on":""}" data-act="comms-tab" data-k="${k}">${lab}${k==="msg" && unread ? ` <span class="unread">${unread}</span>` : ""}</button>`).join("")}
     </div>
-    <div class="dock-body" id="commsBody">${renderComms(l)}</div>`;
+    <div class="dock-body" id="commsBody">${renderComms(l)}</div>
+    <div class="dialer" id="dialer">${renderDialer(l, state.dial)}</div>`;
   placePad();
 }
 

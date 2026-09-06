@@ -116,3 +116,5 @@
 .convo-n{font-size:12.5px;color:var(--muted);margin-top:1px}
 .convo-prev{font-size:13px;color:var(--fg);margin-top:4px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .thread-who{padding:8px 16px 0;font-size:12.5px;color:var(--muted)}
+
+.word .ver{margin-left:8px;font-size:10px;font-weight:600;letter-spacing:.12em;color:var(--dim);vertical-align:super}

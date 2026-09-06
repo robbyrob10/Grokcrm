@@ -11,7 +11,8 @@
   }
   function fitScale() {
     const { w, h } = vp();
-    return Math.min(w / CW, h / CH);
+    const s = Math.min((w || CW) / CW, (h || CH) / CH);
+    return (isFinite(s) && s > 0.05) ? s : 1;
   }
   function clamp() {
     const { w, h } = vp();

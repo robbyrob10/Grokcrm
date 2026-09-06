@@ -6,23 +6,23 @@ function contactBlock(l) {
   for (let i = 0; i < n; i++) {
     const m = mobs[i];
     const d = lands[i];
-    const left = m ? kv(m.l || "Mobile", esc(m.n), qactPhone(m.n, l.contact, true, true)) : "";
-    const right = d ? kv(d.l || "Landline", esc(d.n), qactPhone(d.n, l.contact, false, false)) : "";
+    const left = m ? kv(m.l || "Mobile", num(esc(m.n)), qactPhone(m.n, l.contact, true, true)) : "";
+    const right = d ? kv(d.l || "Landline", num(esc(d.n)), qactPhone(d.n, l.contact, false, false)) : "";
     html += pair(left, right);
   }
   const ems = l.emails || [];
-  for (let i = 0; i < ems.length; i += 2) {
-    const a = ems[i], b = ems[i + 1];
-    const left = a ? kv(a.l || "Email", esc(a.n), `<div class="qacts"><button title="Email" data-act="email-one" data-n="${esc(a.n)}">${ico("mail",15)}</button></div>`) : "";
-    let right = "";
-    if (b) {
-      right = kv(b.l || "Email", esc(b.n), `<div class="qacts"><button title="Email" data-act="email-one" data-n="${esc(b.n)}">${ico("mail",15)}</button></div>`);
-    } else {
-      right = `<div class="kv"><button class="email-all" data-act="email-all">Email All</button></div>`;
-    }
-    html += pair(left, right);
+  if (ems.length) {
+    html += `<div class="email-head">
+      <span>Email</span>
+      <button type="button" class="mail-all-ico" data-act="email-all" title="Email all">${ico("mailAll",15)}</button>
+    </div>`;
+    ems.forEach(a => {
+      html += `<div class="email-row">
+        <span class="vt">${esc(a.n)}</span>
+        <div class="qacts"><button title="Email" data-act="email-one" data-n="${esc(a.n)}">${ico("mail",15)}</button></div>
+      </div>`;
+    });
   }
-  if (ems.length && ems.length % 2 === 0) html += pair(`<div class="kv"><button class="email-all" data-act="email-all">Email All</button></div>`, "");
   return html || `<div class="muted">No contact on file.</div>`;
 }
 function monthKv(a, ai, s, si) {
@@ -34,12 +34,12 @@ function monthKv(a, ai, s, si) {
   </button>`;
 }
 function statementsBlock(l) {
-  const accts = accountsOf(l).slice(0, 2);
+  const accts = accountsOf(l).slice(0, 1);
   if (!accts.length) return `<div class="muted">No statements</div>`;
-  return `<div class="banks${accts.length > 1 ? " two" : ""}">${accts.map((a, ai) => {
+  return `<div class="banks">${accts.map((a, ai) => {
     const months = (a.stmts || []).slice(0, 2);
     return `<div class="bank-col">
-      ${pair(kv("Bank", esc(a.name)), kv("Account", `<span class="num">${esc(a.acct)}</span>`))}
+      ${pair(kv("Bank", esc(a.name)), kv("Account", num(esc(a.acct))))}
       ${pair(monthKv(a, ai, months[0], 0), monthKv(a, ai, months[1], 1))}
     </div>`;
   }).join("")}</div>`;
@@ -79,7 +79,7 @@ function activityBlock(l) {
   const more = items.length - 2;
   return `<div class="below">
     <div class="pitch-block">
-      <div class="k">Why this deal</div>
+      <div class="k">AI sales pitch</div>
       <p class="pitch">${esc(l.pitch)}</p>
     </div>
     <div class="act-block">
@@ -107,23 +107,29 @@ function renderDesk() {
     <div class="desk-scroll">
       <div class="rec-head">
         <div class="rec-main">
-          <div class="rec-title"><h1>${esc(l.company)}</h1>${site}</div>
+          <div class="rec-title"><h1>${esc(l.company)}</h1></div>
+          ${site}
         </div>
         <div class="money">
-          <div><div class="k">Revenue</div><div class="v">${money(rev)}</div></div>
-          <div><div class="k">Approval</div><div class="v">${money(appr)}</div></div>
+          <div><div class="k">Approved</div><div class="v">${money(appr)}</div></div>
         </div>
+        <i class="dline h head-rule"></i>
       </div>
       <div class="sheet-x">
+        <i class="dline v v-top"></i>
+        <i class="dline v v-bot"></i>
+        <i class="dline h mid-l"></i>
+        <i class="dline h mid-r"></i>
+        <i class="dline h sheet-bot"></i>
         <div class="quad">
           <h3>Owner</h3>
           ${pair(kv("Name", esc(displayName(l.contact))), kv("Title", esc(l.title)))}
-          ${pair(kv("SSN", esc(l.ssn)), kv("DOB", esc(l.dob)))}
+          ${pair(kv("SSN", num(esc(l.ssn))), kv("DOB", esc(l.dob)))}
           ${pair(kv("Home", esc(home)))}
         </div>
         <div class="quad">
           <h3>Business</h3>
-          ${pair(kv("EIN", esc(l.ein)), kv("Industry", esc(l.industry)))}
+          ${pair(kv("EIN", num(esc(l.ein))), kv("Industry", esc(l.industry)))}
           ${pair(kv("Time in business", esc(l.tib)), kv("Ownership", esc(ownPct(l))))}
           ${pair(kv("Office", esc(l.address)))}
         </div>

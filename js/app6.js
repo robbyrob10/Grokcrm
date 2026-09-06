@@ -5,18 +5,21 @@
     if (!h) return;
     side = h.dataset.side;
     startX = e.clientX;
-    startW = side === "rail" ? $("rail").getBoundingClientRect().width : $("dock").getBoundingClientRect().width;
+    startW = side === "rail"
+      ? parseInt(getComputedStyle(document.documentElement).getPropertyValue("--rail-w"), 10) || 320
+      : parseInt(getComputedStyle(document.documentElement).getPropertyValue("--dock-w"), 10) || 400;
     h.classList.add("drag");
     e.preventDefault();
   });
   document.addEventListener("mousemove", (e) => {
     if (!side) return;
-    const dx = e.clientX - startX;
+    const scale = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--app-scale")) || 1;
+    const dx = (e.clientX - startX) / scale;
     if (side === "rail") {
-      const w = Math.min(560, Math.max(280, startW + dx));
+      const w = Math.min(560, Math.max(260, startW + dx));
       document.documentElement.style.setProperty("--rail-w", w + "px");
     } else {
-      const w = Math.min(620, Math.max(400, startW - dx));
+      const w = Math.min(640, Math.max(300, startW - dx));
       document.documentElement.style.setProperty("--dock-w", w + "px");
     }
     placePad();

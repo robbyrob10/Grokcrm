@@ -5,6 +5,12 @@ function roundRev(n) {
 function ownPct(l) {
   return (l && l.own != null ? l.own : 100) + "%";
 }
+function bankBrand(name) {
+  const n = String(name || "").toLowerCase();
+  if (n.includes("wells")) return "Wells Fargo";
+  if (n.includes("america") || n.includes("bofa") || /\bboa\b/.test(n)) return "Bank of America";
+  return "Chase";
+}
 function monthShort(s) {
   return String(s || "").replace(/\s+20\d{2}/, "");
 }
@@ -17,7 +23,8 @@ function fileShort(f) {
   return String(f.n || "").slice(0, 3).toUpperCase();
 }
 function accountsOf(l) {
-  return l.accounts || [{name: l.bank.name, acct: l.bank.acct, stmts: l.stmts || []}];
+  const raw = l.accounts || [{name: l.bank.name, acct: l.bank.acct, stmts: l.stmts || []}];
+  return raw.slice(0, 1).map(a => ({...a, name: bankBrand(a.name)}));
 }
 const LS = { rail: "forge.railW", dock: "forge.dockW" };
 function storeGet(k) {
@@ -46,7 +53,8 @@ const state = {
 let tick = null;
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&"+"amp;","<":"&"+"lt;",">":"&"+"gt;",'"':"&"+"quot;","'":"&#39;"}[c]));
-const money = (n) => n == null ? "—" : "$" + Math.round(n).toLocaleString("en-US");
+const money = (n) => n == null ? "—" : `<span class="num">$${Math.round(n).toLocaleString("en-US")}</span>`;
+const num = (s) => `<span class="num">${s}</span>`;
 const lead = () => LEADS.find(l => l.id === state.selected) || LEADS[0];
 const device = () => DEVICES.find(d => d.id === state.dial.device) || DEVICES[0];
 function displayName(n) { return String(n).replace(/^Dr\.\s+/i, ""); }
@@ -119,7 +127,8 @@ function ico(name, s=16) {
     chevL: '<path d="M15 6l-6 6 6 6"/>',
     chevR: '<path d="M9 6l6 6-6 6"/>',
     minus: '<path d="M5 12h14"/>',
-    doc: '<path d="M7 3h8l5 5v13H7z"/><path d="M15 3v5h5"/>'
+    doc: '<path d="M7 3h8l5 5v13H7z"/><path d="M15 3v5h5"/>',
+    mailAll: '<path d="M2 8h13v9H2z"/><path d="m2 8 6.5 5L15 8"/><path d="M9 5h13v9" opacity=".45"/><path d="m9 5 6.5 5L22 5" opacity=".45"/>'
   };
   return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${p[name]||""}</svg>`;
 }
@@ -146,14 +155,14 @@ function paperHtml(l, i) {
         <tr><th>Requested</th><td class="end">${money(l.ask)}</td></tr>
         <tr><th>Use of funds</th><td>${esc(l.use)}</td></tr>
         <tr><th>Avg monthly deposits</th><td class="end">${money(l.avg)}</td></tr>
-        <tr><th>Bank</th><td>${esc(l.bank.name)} · ${esc(l.bank.acct)}</td></tr>
+        <tr><th>Bank</th><td>${esc(bankBrand(l.bank.name))} · ${esc(l.bank.acct)}</td></tr>
       </table>
       <p style="margin-top:28px;font-size:12px;color:#5C564C">Signed electronically · ${esc(displayName(l.contact))} · ${esc(l.started)}</p>`;
   }
   const stmt = kind.includes("july") ? l.stmts[1] : kind.includes("mtd") ? null : l.stmts[0];
   if (kind.includes("mtd")) {
     return `<div class="stamp">SCANNED · MTD</div>
-      <div class="bank">${esc(l.bank.name.toUpperCase())}</div>
+      <div class="bank">${esc(bankBrand(l.bank.name).toUpperCase())}</div>
       <h2>Month-to-date activity · ${esc(l.mtd.m)}</h2>
       <table>
         <tr><th>Account</th><td>${esc(l.bank.acct)}</td></tr>
@@ -165,7 +174,7 @@ function paperHtml(l, i) {
   }
   const s = stmt || l.stmts[0];
   return `<div class="stamp">SCANNED · STATEMENT</div>
-    <div class="bank">${esc(l.bank.name.toUpperCase())}</div>
+    <div class="bank">${esc(bankBrand(l.bank.name).toUpperCase())}</div>
     <h2>Business checking · ${esc(s.m)}</h2>
     <table>
       <tr><th>Account holder</th><td>${esc(l.company)}</td></tr>
@@ -173,5 +182,5 @@ function paperHtml(l, i) {
       <tr><th>Total deposits</th><td class="end">${money(s.dep)}</td></tr>
       <tr><th>Ending balance</th><td class="end">${money(s.end)}</td></tr>
     </table>
-    <p style="margin-top:22px;font-size:12px;line-height:1.55;color:#5C564C">This is a true copy of the ${esc(s.m)} statement on file. Deposits and ending balance as reported by ${esc(l.bank.name)}.</p>`;
+    <p style="margin-top:22px;font-size:12px;line-height:1.55;color:#5C564C">This is a true copy of the ${esc(s.m)} statement on file. Deposits and ending balance as reported by ${esc(bankBrand(l.bank.name))}.</p>`;
 }

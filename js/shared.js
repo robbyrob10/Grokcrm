@@ -1,6 +1,12 @@
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&"+"amp;","<":"&"+"lt;",">":"&"+"gt;",'"':"&"+"quot;","'":"&#39;"}[c]));
-const money = (n) => n == null ? "—" : "$" + Math.round(n).toLocaleString("en-US");
+const money = (n) => n == null ? "—" : `<span class="num">$${Math.round(n).toLocaleString("en-US")}</span>`;
+function bankBrand(name) {
+  const n = String(name || "").toLowerCase();
+  if (n.includes("wells")) return "Wells Fargo";
+  if (n.includes("america") || n.includes("bofa") || /\bboa\b/.test(n)) return "Bank of America";
+  return "Chase";
+}
 const params = () => new URLSearchParams(location.search);
 
 function displayName(n) { return String(n).replace(/^Dr\.\s+/i, ""); }
@@ -34,7 +40,8 @@ function toast(msg) {
   toast._t = setTimeout(() => el.classList.remove("show"), 2200);
 }
 function accountsOf(l) {
-  return l.accounts || [{name: l.bank.name, acct: l.bank.acct, stmts: (l.stmts || []).map(s => ({...s, pages: s.pages || 6}))}];
+  const raw = l.accounts || [{name: l.bank.name, acct: l.bank.acct, stmts: (l.stmts || []).map(s => ({...s, pages: s.pages || 6}))}];
+  return raw.slice(0, 1).map(a => ({...a, name: bankBrand(a.name), stmts: (a.stmts || []).map(s => ({...s, pages: s.pages || 6}))}));
 }
 function bankMark(name) {
   const n = String(name).toLowerCase();
@@ -150,8 +157,14 @@ function unreadOf(l) {
 
 (function sizeApp() {
   function apply() {
+    const w = window.innerWidth || 1640;
+    const scale = w < 1640 ? Math.max(0.45, w / 1640) : 1;
+    document.documentElement.style.setProperty("--app-scale", String(scale));
+    const screenH = window.screen && window.screen.height ? window.screen.height : 900;
     let h = window.innerHeight || 900;
-    if (h > 1100) h = 900;
+    const inflated = h > screenH * 1.35;
+    if (inflated) h = Math.max(760, screenH);
+    else if (scale < 1) h = Math.round(h / scale);
     h = Math.max(760, Math.round(h));
     document.documentElement.style.setProperty("--app-h", h + "px");
   }

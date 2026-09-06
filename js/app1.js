@@ -3,35 +3,43 @@ function stmtPaper(l, ai, si, page) {
   const s = a.stmts[si];
   const pages = s.pages || 6;
   const p = Math.max(0, Math.min(pages - 1, page|0));
+  const brand = bankBrand(a.name).toUpperCase();
+  const names = ["ACH CREDIT · SETTLEMENT","CARD SETTLEMENT","WIRE IN","ACH CREDIT · BATCH","COUNTER CREDIT","ACH DEBIT · VENDOR","PAYROLL ACH","RENT DRAFT","UTILITIES","SYSCO FOODS","AMEX SETTLEMENT","DEPOSIT"];
+  const rows = Array.from({length: p === 0 ? 14 : 16}, (_, i) => {
+    const day = 1 + ((p * 14 + i) % 28);
+    const amt = Math.round((s.dep / (pages * 12)) * (0.65 + ((i * 3 + p) % 6) * 0.11));
+    const nm = names[(i + p * 3) % names.length];
+    const credit = !/debit|payroll|rent|util/i.test(nm);
+    return `<tr><td>${esc(monthShort(s.m).slice(0,3))} ${day}</td><td>${nm}</td><td class="end">${credit ? money(amt) : "−" + money(amt).replace("−","")}</td></tr>`;
+  }).join("");
   if (p === 0) {
-    return `<div class="stamp">SCANNED · ${p+1}/${pages}</div>
-      <div class="bank">${esc(a.name.toUpperCase())}</div>
-      <h2>Business checking · ${esc(s.m)}</h2>
+    return `<div class="stamp">MEMBER FDIC · ${p+1}/${pages}</div>
+      <div class="bank">${esc(brand)}</div>
+      <div class="stmt-sub">Business checking statement</div>
+      <h2>${esc(s.m)} 20${/\d{4}/.test(s.m) ? "" : "26"}</h2>
       <table>
         <tr><th>Account holder</th><td>${esc(l.company)}</td></tr>
-        <tr><th>Account number</th><td>${esc(a.acct)}</td></tr>
-        <tr><th>Period</th><td>${esc(s.m)}</td></tr>
-        <tr><th>Total deposits</th><td class="end">${money(s.dep)}</td></tr>
+        <tr><th>Account number</th><td class="end">${esc(a.acct)}</td></tr>
+        <tr><th>Beginning balance</th><td class="end">${money(Math.round(s.end * 0.86))}</td></tr>
+        <tr><th>Total deposits / credits</th><td class="end">${money(s.dep)}</td></tr>
+        <tr><th>Total withdrawals / debits</th><td class="end">−${money(Math.round(s.dep * 0.92))}</td></tr>
         <tr><th>Ending balance</th><td class="end">${money(s.end)}</td></tr>
       </table>
-      <p style="margin-top:22px;font-size:12px;line-height:1.55;color:#5C564C">Page 1 of ${pages}. Use the arrows for subsequent activity pages. Figures as reported by ${esc(a.name)}.</p>`;
+      <h2 style="margin-top:22px;font-size:13px">Account activity</h2>
+      <table>
+        <tr><th>Date</th><th>Description</th><th>Amount</th></tr>
+        ${rows}
+      </table>
+      <p style="margin-top:18px;font-size:11px;color:#5C564C">Page 1 of ${pages}. Continued on next page. ${esc(brand)} N.A. Member FDIC.</p>`;
   }
-  const rows = Array.from({length: 12}, (_, i) => {
-    const day = 1 + ((p * 12 + i) % 28);
-    const amt = Math.round((s.dep / (pages * 11)) * (0.7 + ((i * 3 + p) % 5) * 0.12));
-    const names = ["ACH credit · batch", "Card settlement", "Wire in", "Counter credit", "ACH debit · vendor", "Payroll", "Rent draft"];
-    const nm = names[(i + p) % names.length];
-    const credit = !/debit|payroll|rent/i.test(nm);
-    return `<tr><td>${esc(s.m.slice(0,3))} ${day}</td><td>${nm}</td><td class="end">${credit ? money(amt) : "−" + money(amt)}</td></tr>`;
-  }).join("");
-  return `<div class="stamp">SCANNED · ${p+1}/${pages}</div>
-    <div class="bank">${esc(a.name.toUpperCase())}</div>
-    <h2>Activity · ${esc(s.m)} · p. ${p+1}</h2>
+  return `<div class="stamp">MEMBER FDIC · ${p+1}/${pages}</div>
+    <div class="bank">${esc(brand)}</div>
+    <h2>Account activity · ${esc(monthShort(s.m))} · p. ${p+1}</h2>
     <table>
       <tr><th>Date</th><th>Description</th><th>Amount</th></tr>
       ${rows}
     </table>
-    <p style="margin-top:18px;font-size:12px;color:#5C564C">Continued · ${esc(a.acct)}</p>`;
+    <p style="margin-top:18px;font-size:11px;color:#5C564C">${p+1 === pages ? "End of statement." : "Continued."} Account ${esc(a.acct)}.</p>`;
 }
 function fmtElapsed(s) {
   const m = Math.floor(s / 60), r = s % 60;
@@ -60,8 +68,14 @@ function applyWidths() {
   document.documentElement.style.setProperty("--dock-w", (d ? +d : 400) + "px");
 }
 function sizeApp() {
+  const w = window.innerWidth || 1640;
+  const scale = w < 1640 ? Math.max(0.45, w / 1640) : 1;
+  document.documentElement.style.setProperty("--app-scale", String(scale));
+  const screenH = window.screen && window.screen.height ? window.screen.height : 900;
   let h = window.innerHeight || 900;
-  if (h > 1100) h = 900;
+  const inflated = h > screenH * 1.35;
+  if (inflated) h = Math.max(760, screenH);
+  else if (scale < 1) h = Math.round(h / scale);
   h = Math.max(760, Math.round(h));
   document.documentElement.style.setProperty("--app-h", h + "px");
 }

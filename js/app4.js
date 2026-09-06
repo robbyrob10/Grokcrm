@@ -1,3 +1,36 @@
+function lightboxShell(letterHtml, spec) {
+  const z = state.fileZoom || 1.2;
+  const pages = spec.pages || 1;
+  const page = spec.page || 0;
+  const ticks = pages > 1
+    ? `<div class="lb-ticks">${Array.from({length: pages}, (_, i) =>
+        `<button type="button" class="${i === page ? "on" : ""}" data-act="page-go" data-p="${i}" title="Page ${i + 1}"></button>`).join("")}</div>`
+    : "";
+  return `
+    <button type="button" class="lb-x" data-act="close" title="Close">${ico("x",18)}</button>
+    <button type="button" class="lb-arrow left" data-act="file-prev" title="Previous">${ico("chevL",22)}</button>
+    <button type="button" class="lb-arrow right" data-act="file-next" title="Next">${ico("chevR",22)}</button>
+    <div class="lb-zoom">
+      <button type="button" data-act="file-zoom" data-d="-1" title="Zoom out">${ico("minus",14)}</button>
+      <button type="button" data-act="file-zoom" data-d="1" title="Zoom in">${ico("plus",14)}</button>
+    </div>
+    ${ticks}
+    <div class="lb-stage">
+      <div class="letter-wrap" style="width:${816 * z}px;height:${1056 * z}px">
+        <div class="letter" style="transform:scale(${z})">${letterHtml}</div>
+      </div>
+    </div>`;
+}
+function fileKind(l, i) {
+  const lab = fileShort(l.files[i] || {});
+  if (lab === "APP") return {kind:"app", pages:1, page:0};
+  if (lab === "MTD") return {kind:"mtd", pages:2, page:0};
+  const a = accountsOf(l)[0];
+  const si = (a.stmts || []).findIndex(s => monthShort(s.m).toUpperCase().slice(0, 3) === lab);
+  if (si >= 0) return {kind:"stmt", ai:0, si, pages: a.stmts[si].pages || 6, page:0};
+  return {kind:"app", pages:1, page:0};
+}
+
 function renderModal() {
   const ov = $("overlay");
   const m = state.modal;
@@ -43,26 +76,13 @@ function renderModal() {
     const l = lead();
     const i = Math.max(0, Math.min(l.files.length - 1, m.i | 0));
     m.i = i;
-    const f = l.files[i];
-    const z = state.fileZoom || 1.2;
-    const pct = Math.round(z * 100);
-    ov.innerHTML = `<div class="viewer" data-viewer="1">
-      <div class="viewer-bar">
-        <button title="Previous" data-act="file-prev">${ico("chevL",16)}</button>
-        <button title="Next" data-act="file-next">${ico("chevR",16)}</button>
-        <span class="fn">${esc(f.n)}.pdf</span>
-        <span class="pg">${i+1} / ${l.files.length}</span>
-        <button title="Zoom out" data-act="file-zoom" data-d="-1">${ico("minus",14)}</button>
-        <span class="z">${pct}%</span>
-        <button title="Zoom in" data-act="file-zoom" data-d="1">${ico("plus",14)}</button>
-        <button title="Close" data-act="close">${ico("x",16)}</button>
-      </div>
-      <div class="viewer-stage">
-        <div class="letter-wrap" style="width:${816*z}px;height:${1056*z}px">
-          <div class="letter" style="transform:scale(${z})">${paperHtml(l, i)}</div>
-        </div>
-      </div>
-    </div>`;
+    const meta = fileKind(l, i);
+    const page = Math.max(0, Math.min((meta.pages || 1) - 1, m.page | 0));
+    m.page = page;
+    let html = paperHtml(l, i);
+    if (meta.kind === "stmt") html = stmtPaper(l, meta.ai, meta.si, page);
+    ov.className = "overlay open lite";
+    ov.innerHTML = lightboxShell(html, {pages: meta.pages, page});
     return;
   }
   if (m.type === "stmt") {
@@ -75,25 +95,8 @@ function renderModal() {
     const pages = s.pages || 6;
     const page = Math.max(0, Math.min(pages - 1, m.page | 0));
     m.ai = ai; m.si = si; m.page = page;
-    const z = state.fileZoom || 1.2;
-    const pct = Math.round(z * 100);
-    ov.innerHTML = `<div class="viewer" data-viewer="1">
-      <div class="viewer-bar">
-        <button title="Previous page" data-act="file-prev">${ico("chevL",16)}</button>
-        <button title="Next page" data-act="file-next">${ico("chevR",16)}</button>
-        <span class="fn">${esc(s.m)} statement · ${esc(a.name)} · ${esc(a.acct)}</span>
-        <span class="pg">${page+1} / ${pages}</span>
-        <button title="Zoom out" data-act="file-zoom" data-d="-1">${ico("minus",14)}</button>
-        <span class="z">${pct}%</span>
-        <button title="Zoom in" data-act="file-zoom" data-d="1">${ico("plus",14)}</button>
-        <button title="Close" data-act="close">${ico("x",16)}</button>
-      </div>
-      <div class="viewer-stage">
-        <div class="letter-wrap" style="width:${816*z}px;height:${1056*z}px">
-          <div class="letter" style="transform:scale(${z})">${stmtPaper(l, ai, si, page)}</div>
-        </div>
-      </div>
-    </div>`;
+    ov.className = "overlay open lite";
+    ov.innerHTML = lightboxShell(stmtPaper(l, ai, si, page), {pages, page});
     return;
   }
   if (m.type === "history") {

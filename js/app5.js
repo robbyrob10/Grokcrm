@@ -96,7 +96,7 @@ document.addEventListener("click", (e) => {
     state.modal = null; renderAll(); toast("Sent"); return;
   }
   if (act === "open-mail") { state.modal = {type:"mail-read", i:+b.dataset.i}; renderModal(); return; }
-  if (act === "file") { state.modal = {type:"file", i:+b.dataset.i}; state.fileZoom = 1.2; renderModal(); return; }
+  if (act === "file") { state.modal = {type:"file", i:+b.dataset.i, page:0}; state.fileZoom = 1.2; renderModal(); return; }
   if (act === "stmt") {
     state.modal = {type:"stmt", ai:+b.dataset.ai, si:+b.dataset.si, page:0};
     state.fileZoom = 1.2;
@@ -105,14 +105,19 @@ document.addEventListener("click", (e) => {
   if (act === "file-prev" || act === "file-next") {
     const dir = act === "file-next" ? 1 : -1;
     if (state.modal?.type === "stmt") {
-      const s = accountsOf(lead())[state.modal.ai].stmts[state.modal.si];
-      const n = s.pages || 6;
-      state.modal.page = (state.modal.page + dir + n) % n;
+      const a = accountsOf(lead())[state.modal.ai];
+      const n = a.stmts.length;
+      state.modal.si = (state.modal.si + dir + n) % n;
+      state.modal.page = 0;
       renderModal(); return;
     }
     const n = lead().files.length;
-    state.modal = {type:"file", i: ((state.modal.i || 0) + dir + n) % n};
+    state.modal = {type: "file", i: ((state.modal.i || 0) + dir + n) % n, page: 0};
     renderModal(); return;
+  }
+  if (act === "page-go") {
+    if (state.modal) { state.modal.page = +b.dataset.p; renderModal(); }
+    return;
   }
   if (act === "file-zoom") {
     const d = +b.dataset.d;

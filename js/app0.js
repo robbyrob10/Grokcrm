@@ -32,8 +32,14 @@ const lead = () => LEADS.find(l => l.id === state.selected) || LEADS[0];
 const device = () => DEVICES.find(d => d.id === state.dial.device) || DEVICES[0];
 function displayName(n) { return String(n).replace(/^Dr\.\s+/i, ""); }
 function hue(str) {
-  let h = 0; for (const c of str) h = (h * 33 + c.charCodeAt(0)) % 360;
-  return `hsl(${h} 22% 38%)`;
+  const pal = {ns:"#2B6E72",hl:"#9A5628",bd:"#8A7020",ro:"#4E6230",lu:"#2E6A48",mw:"#7A3E50",kp:"#3A5480",ap:"#8A3A32"};
+  const s = String(str || "");
+  if (typeof LEADS !== "undefined") {
+    const l = LEADS.find(x => x.id===s || x.company===s || x.contact===s || displayName(x.contact)===s);
+    if (l && pal[l.id]) return pal[l.id];
+  }
+  let h = 0; for (const c of s) h = (h * 33 + c.charCodeAt(0)) >>> 0;
+  return "hsl(" + ((h * 137) % 360) + " 40% 36%)";
 }
 function initials(n) {
   return displayName(n).split(/\s+/).slice(0,2).map(p => p[0]).join("").toUpperCase();
@@ -80,27 +86,27 @@ function paperHtml(l, i) {
   const kind = (f.n || "").toLowerCase();
   const acct = "\u2022\u2022\u2022\u2022 " + String(l.bank.acct).slice(-4);
   if (kind.includes("application")) {
-    return `<div class="stamp">SCANNED · APPLICATION</div>
+    return `<div class="stamp">SCANNED \u00b7 APPLICATION</div>
       <div class="bank">FORGE MERCHANT DESK</div>
       <h2>Merchant Cash Advance Application</h2>
       <table>
         <tr><th>Legal name</th><td>${esc(l.company)}</td></tr>
         <tr><th>DBA</th><td>${esc(l.dba)}</td></tr>
-        <tr><th>Owner</th><td>${esc(displayName(l.contact))} · ${esc(l.title)}</td></tr>
+        <tr><th>Owner</th><td>${esc(displayName(l.contact))} \u00b7 ${esc(l.title)}</td></tr>
         <tr><th>Address</th><td>${esc(l.address)}</td></tr>
         <tr><th>EIN</th><td>${esc(l.ein)}</td></tr>
         <tr><th>Requested</th><td class="end">${money(l.ask)}</td></tr>
         <tr><th>Use of funds</th><td>${esc(l.use)}</td></tr>
         <tr><th>Avg monthly deposits</th><td class="end">${money(l.avg)}</td></tr>
-        <tr><th>Bank</th><td>${esc(l.bank.name)} · ${esc(l.bank.acct)}</td></tr>
+        <tr><th>Bank</th><td>${esc(l.bank.name)} \u00b7 ${esc(l.bank.acct)}</td></tr>
       </table>
-      <p style="margin-top:28px;font-size:12px;color:#5C564C">Signed electronically · ${esc(displayName(l.contact))} · ${esc(l.started)}</p>`;
+      <p style="margin-top:28px;font-size:12px;color:#5C564C">Signed electronically \u00b7 ${esc(displayName(l.contact))} \u00b7 ${esc(l.started)}</p>`;
   }
   const stmt = kind.includes("july") ? l.stmts[1] : kind.includes("mtd") ? null : l.stmts[0];
   if (kind.includes("mtd")) {
-    return `<div class="stamp">SCANNED · MTD</div>
+    return `<div class="stamp">SCANNED \u00b7 MTD</div>
       <div class="bank">${esc(l.bank.name.toUpperCase())}</div>
-      <h2>Month-to-date activity · ${esc(l.mtd.m)}</h2>
+      <h2>Month-to-date activity \u00b7 ${esc(l.mtd.m)}</h2>
       <table>
         <tr><th>Account</th><td>${esc(l.bank.acct)}</td></tr>
         <tr><th>MTD deposits</th><td class="end">${money(l.mtd.dep)}</td></tr>
@@ -110,9 +116,9 @@ function paperHtml(l, i) {
       <p style="margin-top:22px;font-size:12px;color:#5C564C">Activity through today. Not a final statement.</p>`;
   }
   const s = stmt || l.stmts[0];
-  return `<div class="stamp">SCANNED · STATEMENT</div>
+  return `<div class="stamp">SCANNED \u00b7 STATEMENT</div>
     <div class="bank">${esc(l.bank.name.toUpperCase())}</div>
-    <h2>Business checking · ${esc(s.m)}</h2>
+    <h2>Business checking \u00b7 ${esc(s.m)}</h2>
     <table>
       <tr><th>Account holder</th><td>${esc(l.company)}</td></tr>
       <tr><th>Account number</th><td>${esc(l.bank.acct)}</td></tr>
